@@ -1,0 +1,49 @@
+<div class="fixed inset-0 bg-black flex flex-col items-center justify-center z-50">
+  <!-- Level number -->
+  <div 
+    class="text-neon-green/60 text-lg tracking-[0.5em] mb-4 font-orbitron"
+    [class.animate-fade-in]="showLevel()"
+  >
+    LEVEL {{ level().level }}
+  </div>
+  
+  <!-- Title -->
+  <h1 
+    class="text-5xl md:text-7xl font-bold text-white mb-8 font-orbitron tracking-wider"
+    [class.animate-title-glow]="showTitle()"
+  >
+    @if (showTitle()) {
+      {{ level().title }}
+    }
+  </h1>
+  
+  <!-- Story text with typewriter effect -->
+  <p 
+    class="text-xl md:text-2xl text-gray-400 max-w-2xl text-center px-8 h-16 font-orbitron"
+  >
+    {{ displayedText() }}
+    @if (isTyping()) {
+      <span class="animate-blink text-neon-green">|</span>
+    }
+  </p>
+  
+  <!-- Continue button -->
+  @if (showContinue()) {
+    <button
+      (click)="onContinue()"
+      class="mt-16 px-12 py-4 border-2 border-neon-green text-neon-green 
+             font-orbitron text-xl tracking-widest
+             hover:bg-neon-green hover:text-black transition-all duration-300
+             animate-pulse-glow"
+    >
+      WEITER <span class="text-sm opacity-60">[SPACE]</span>
+    </button>
+  }
+  
+  <!-- Skip hint -->
+  @if (!showContinue()) {
+    <p class="absolute bottom-8 text-gray-600 text-sm font-orbitron animate-pulse">
+      Drücke LEERTASTE zum Überspringen
+    </p>
+  }
+</div>

@@ -1,0 +1,9 @@
+<!-- Controls - always show player controls -->
+<div class="flex items-center gap-6 text-xs text-white/30 font-mono">
+  @for (control of player1Controls; track control.action) {
+    <div class="flex items-center gap-2">
+      <kbd class="px-2 py-1 bg-dark-card/50 rounded text-white/50">{{ control.keys }}</kbd>
+      <span>{{ control.action }}</span>
+    </div>
+  }
+</div>

@@ -1,0 +1,171 @@
+<div class="relative w-full h-screen bg-gradient-to-b from-dark-bg via-dark-card to-dark-bg overflow-hidden">
+  <!-- Canvas -->
+  <canvas #gameCanvas class="absolute inset-0 w-full h-full"></canvas>
+  
+  <!-- Ambient Glow Effects -->
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-neon-green/5 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-neon-red/5 rounded-full blur-3xl"></div>
+  </div>
+
+  <!-- Loading Overlay -->
+  @if (isLoading()) {
+    <div class="absolute inset-0 flex items-center justify-center bg-dark-bg/95 backdrop-blur-sm z-50">
+      <app-loading-spinner [size]="80" text="LÄDT"></app-loading-spinner>
+    </div>
+  }
+
+  <!-- Connection Status Bar (Online Mode only) -->
+  @if (!isLoading() && !isLocalMode()) {
+    <div class="absolute top-4 left-1/2 -translate-x-1/2 z-40">
+      <app-connection-status
+        [state]="connectionState()"
+        [ping]="network.ping()"
+        [opponentName]="match.opponentName()"
+        (retry)="retryConnection()">
+      </app-connection-status>
+    </div>
+  }
+
+  <!-- Local Mode Header -->
+  @if (!isLoading() && isLocalMode()) {
+    <div class="absolute top-4 left-1/2 -translate-x-1/2 z-40">
+      <div class="flex items-center gap-4 px-6 py-3 bg-dark-card/90 backdrop-blur-sm border border-neon-blue/30 rounded-2xl">
+        <div class="flex items-center gap-2">
+          <div class="w-2 h-2 rounded-full bg-neon-blue animate-pulse"></div>
+          <span class="text-sm font-game text-white/70">EINZELSPIELER</span>
+        </div>
+        <div class="h-4 w-px bg-white/10"></div>
+        
+        <!-- AI Difficulty Selector -->
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-game text-white/40">AI:</span>
+          <select 
+            [value]="aiDifficulty()"
+            (change)="onAIDifficultyChange($event)"
+            class="bg-dark-bg/50 border border-white/10 rounded px-2 py-1 text-xs font-game text-white/70 focus:outline-none focus:border-neon-blue/50">
+            <option value="easy">Leicht</option>
+            <option value="medium">Mittel</option>
+            <option value="hard">Schwer</option>
+          </select>
+        </div>
+        
+        <div class="h-4 w-px bg-white/10"></div>
+        <button 
+          (click)="goToMenu()"
+          class="text-xs font-game text-neon-blue hover:text-white transition-colors">
+          ← MENÜ
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- HUD -->
+  @if (!isLoading()) {
+    <div class="absolute top-16 md:top-20 left-0 right-0 z-30">
+      <app-hud
+        [player1Health]="match.player1Health()"
+        [player2Health]="match.player2Health()"
+        [player1SpecialMeter]="match.player1SpecialMeter()"
+        [player2StunMeter]="match.player2StunMeter()"
+        [player1Stunned]="match.player1Stunned()"
+        [player2Stunned]="match.player2Stunned()"
+        [player1Name]="isLocalMode() ? 'Du' : match.playerName()"
+        [player2Name]="isLocalMode() ? 'KI' : match.opponentName()"
+        [isPlayer1]="isPlayer1()"
+        [hasOpponent]="hasOpponent()">
+      </app-hud>
+    </div>
+  }
+
+  <!-- AI Attack Telegraph Indicator -->
+  @if (aiTelegraph()) {
+    <div 
+      class="absolute z-40 animate-bounce pointer-events-none"
+      [style.left.px]="aiTelegraphPosition().x"
+      [style.top.px]="aiTelegraphPosition().y"
+      style="transform: translateX(-50%);">
+      <div class="px-3 py-2 bg-red-600/95 backdrop-blur-sm rounded-lg border-2 border-red-400 shadow-lg shadow-red-500/50">
+        <div class="flex flex-col items-center">
+          <span class="text-2xl">
+            @switch (aiTelegraph()) {
+              @case ('light') { ⚡ }
+              @case ('heavy') { 💥 }
+              @case ('special') { 🔥 }
+            }
+          </span>
+          <div class="text-xs font-black text-white font-game tracking-wider uppercase">
+            {{ aiTelegraph() }}
+          </div>
+        </div>
+      </div>
+      <!-- Arrow pointing down to character -->
+      <div class="w-0 h-0 mx-auto border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-red-600"></div>
+    </div>
+  }
+  
+  <!-- Player "BLOCK!" Indicator (Perfect Block Timing) -->
+  @if (showBlockIndicator()) {
+    <div 
+      class="absolute z-40 pointer-events-none animate-pulse"
+      [style.left.px]="blockIndicatorPosition().x"
+      [style.top.px]="blockIndicatorPosition().y"
+      style="transform: translateX(-50%); animation-duration: 0.15s;">
+      <div class="px-4 py-2 bg-blue-500/95 backdrop-blur-sm rounded-lg border-2 border-cyan-300 shadow-lg shadow-cyan-400/50">
+        <div class="flex flex-col items-center">
+          <span class="text-2xl">🛡️</span>
+          <div class="text-sm font-black text-white font-game tracking-wider uppercase">
+            BLOCK!
+          </div>
+        </div>
+      </div>
+      <!-- Arrow pointing down to player -->
+      <div class="w-0 h-0 mx-auto border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-blue-500"></div>
+    </div>
+  }
+
+  <!-- Loadout Selectors -->
+  @if (!isLoading()) {
+    @if (isLocalMode()) {
+      <!-- Local Mode: Player loadout left, AI loadout right -->
+      <div class="absolute bottom-24 left-8 z-30">
+        <app-loadout-selector
+          [selected]="match.myLoadout()"
+          [label]="'SPIELER'"
+          (loadoutChange)="onLoadoutChange($event)">
+        </app-loadout-selector>
+      </div>
+      <div class="absolute bottom-24 right-8 z-30">
+        <app-loadout-selector
+          [selected]="aiLoadout()"
+          [label]="'AI'"
+          (loadoutChange)="onAiLoadoutChange($event)">
+        </app-loadout-selector>
+      </div>
+    } @else {
+      <!-- Online Mode: Single centered selector -->
+      <div class="absolute bottom-24 left-1/2 -translate-x-1/2 z-30">
+        <app-loadout-selector
+          [selected]="match.myLoadout()"
+          (loadoutChange)="onLoadoutChange($event)">
+        </app-loadout-selector>
+      </div>
+    }
+  }
+
+  <!-- Controls Info -->
+  @if (!isLoading()) {
+    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-30">
+      <app-controls-info></app-controls-info>
+    </div>
+  }
+
+  <!-- Match End Overlay -->
+  @if (matchEnded()) {
+    <app-match-result
+      [isWinner]="isWinner()"
+      (playAgain)="playAgain()"
+      (backToMenu)="goToMenu()">
+    </app-match-result>
+  }
+</div>

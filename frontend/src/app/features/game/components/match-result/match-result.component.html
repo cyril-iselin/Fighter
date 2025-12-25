@@ -1,0 +1,79 @@
+<div class="absolute inset-0 flex items-center justify-center bg-dark-bg/80 backdrop-blur-sm z-50">
+  <div class="relative flex flex-col items-center gap-4">
+    <!-- Background Glow -->
+    <div 
+      class="absolute -inset-20 rounded-full blur-3xl opacity-30"
+      [class.bg-neon-green]="isWinner"
+      [class.bg-neon-red]="!isWinner">
+    </div>
+    
+    <!-- Main Panel -->
+    <div class="relative bg-dark-card/90 backdrop-blur-md rounded-3xl p-12 border border-white/10 text-center w-full max-w-md">
+      <!-- Result Text -->
+      <h2 
+        class="text-6xl font-black font-game tracking-wider mb-8"
+        [class.text-neon-green]="isWinner"
+        [class.animate-pulse]="isWinner"
+        [class.text-neon-red]="!isWinner">
+        {{ isWinner ? 'SIEG!' : 'NIEDERLAGE' }}
+      </h2>
+      
+      <!-- Stats -->
+      @if (showStats) {
+        <div class="flex justify-center gap-8 mb-8 text-white/60">
+          <div class="text-center">
+            <div class="text-2xl font-bold font-game">{{ rounds }}</div>
+            <div class="text-xs uppercase tracking-wider">Runden Gewonnen</div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold font-game">{{ totalRounds }}</div>
+            <div class="text-xs uppercase tracking-wider">Runden Gesamt</div>
+          </div>
+        </div>
+      }
+      
+      <!-- Decorative Line -->
+      <div class="w-48 h-1 mx-auto mb-8 rounded-full"
+        [class.bg-gradient-to-r]="true"
+        [class.from-transparent]="true"
+        [class.via-neon-green]="isWinner"
+        [class.via-neon-red]="!isWinner"
+        [class.to-transparent]="true">
+      </div>
+      
+      <!-- Play Again Button -->
+      <button 
+        (click)="playAgain.emit()"
+        class="group relative px-10 py-4 font-game font-bold text-lg tracking-wider rounded-xl transition-all duration-300 hover:scale-105 active:scale-95"
+        [class.bg-neon-green]="isWinner"
+        [class.hover:bg-neon-green/80]="isWinner"
+        [class.text-dark-bg]="isWinner"
+        [class.bg-neon-red]="!isWinner"
+        [class.hover:bg-neon-red/80]="!isWinner"
+        [class.text-white]="!isWinner">
+        <span class="relative z-10">NOCHMAL</span>
+        <span class="relative z-10 ml-2 text-xs opacity-60">[SPACE]</span>
+        <!-- Button Glow -->
+        <div 
+          class="absolute inset-0 rounded-xl blur-lg opacity-50 group-hover:opacity-70 transition-opacity -z-10"
+          [class.bg-neon-green]="isWinner"
+          [class.bg-neon-red]="!isWinner">
+        </div>
+      </button>
+      
+      <!-- Back to Menu Button -->
+      <button 
+        (click)="backToMenu.emit()"
+        class="mt-4 px-6 py-2 text-gray-500 font-game text-sm tracking-wider hover:text-gray-300 transition-colors">
+        ← Zurück zum Menü <span class="text-xs opacity-60">[ESC]</span>
+      </button>
+    </div>
+    
+    <!-- Combat Log Panel (below, same width) -->
+    @if (showCombatLog) {
+      <div class="relative w-full max-w-md">
+        <app-combat-log [showLog]="true" [maxEntries]="100"></app-combat-log>
+      </div>
+    }
+  </div>
+</div>

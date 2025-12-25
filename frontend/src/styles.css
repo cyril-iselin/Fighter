@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap');
+@import "tailwindcss";
+
+/* Theme customization */
+@theme {
+  /* Colors */
+  --color-neon-green: #00ff88;
+  --color-neon-red: #ff6b6b;
+  --color-neon-blue: #6b9fff;
+  --color-dark-bg: #0f0f1a;
+  --color-dark-card: #1a1a2e;
+  --color-dark-border: #2d2d44;
+  
+  /* Font family */
+  --font-game: 'Orbitron', sans-serif;
+  
+  /* Animations */
+  --animate-glow: glow 2s ease-in-out infinite;
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-pulse-slow: pulse 3s ease-in-out infinite;
+  
+  @keyframes glow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+}
+
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--color-dark-bg);
+}
+

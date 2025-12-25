@@ -1,0 +1,23 @@
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 10px rgba(0, 255, 136, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(0, 255, 136, 0.6); }
+}
+
+@keyframes defeatGlow {
+  0%, 100% { 
+    text-shadow: 0 0 20px rgba(255, 107, 107, 0.5),
+                 0 0 40px rgba(255, 107, 107, 0.3);
+  }
+  50% { 
+    text-shadow: 0 0 40px rgba(255, 107, 107, 0.8),
+                 0 0 80px rgba(255, 107, 107, 0.5);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 1.5s ease-in-out infinite;
+}
+
+.animate-defeat-glow {
+  animation: defeatGlow 2s ease-in-out infinite;
+}

@@ -1,0 +1,218 @@
+<div class="relative min-h-screen bg-dark-bg overflow-hidden flex flex-col">
+  
+  <!-- Animated Background -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <!-- Grid Pattern -->
+    <div class="absolute inset-0 opacity-5"
+      style="background-image: linear-gradient(rgba(0,255,136,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,136,0.1) 1px, transparent 1px); background-size: 50px 50px;">
+    </div>
+    
+    <!-- Floating Orbs -->
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-neon-green/10 rounded-full blur-3xl animate-float"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-neon-red/10 rounded-full blur-3xl animate-float" style="animation-delay: -1.5s;"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-neon-blue/5 rounded-full blur-3xl"></div>
+    
+    <!-- Scan Lines -->
+    <div class="absolute inset-0 opacity-[0.02]"
+      style="background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px);">
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="relative z-10 flex-1 flex flex-col items-center justify-center px-4">
+    
+    <!-- Logo / Title -->
+    <div class="text-center mb-16">
+      <!-- Glowing Title -->
+      <h1 class="relative">
+        <span class="block text-7xl md:text-9xl font-black font-game tracking-wider text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/50">
+          FIGHTER
+        </span>
+        <!-- Glow Effect -->
+        <span class="absolute inset-0 text-7xl md:text-9xl font-black font-game tracking-wider text-neon-green blur-2xl opacity-30">
+          FIGHTER
+        </span>
+      </h1>
+      
+      <!-- Subtitle -->
+      <div class="mt-4 flex items-center justify-center gap-4">
+        <div class="h-px w-16 bg-gradient-to-r from-transparent to-neon-green/50"></div>
+        <p class="text-lg md:text-xl font-game text-white/40 tracking-[0.3em] uppercase">
+          Leben oder Tod
+        </p>
+        <div class="h-px w-16 bg-gradient-to-l from-transparent to-neon-green/50"></div>
+      </div>
+    </div>
+
+    <!-- Menu Buttons -->
+    <div class="flex flex-col gap-4 w-full max-w-md">
+      
+      <!-- Campaign Button (NEW!) -->
+      <button 
+        (click)="startCampaign()"
+        (mouseenter)="hoveredButton.set('campaign')"
+        (mouseleave)="hoveredButton.set(null)"
+        class="group relative overflow-hidden rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+        
+        <!-- Animated Border Gradient -->
+        <div class="absolute -inset-[1px] bg-gradient-to-r from-yellow-500 via-neon-red to-yellow-500 rounded-2xl opacity-70 group-hover:opacity-100 transition-opacity"
+          style="background-size: 200% 100%; animation: gradient-shift 3s linear infinite;">
+        </div>
+        
+        <!-- Button Background -->
+        <div class="absolute inset-[1px] bg-gradient-to-r from-dark-card via-dark-bg to-dark-card rounded-2xl"></div>
+        
+        <!-- Hover Glow -->
+        <div class="absolute inset-0 bg-gradient-to-r from-yellow-500/0 via-yellow-500/10 to-yellow-500/0 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
+        
+        <!-- Content -->
+        <div class="relative px-8 py-6 flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-xl bg-yellow-500/10 flex items-center justify-center group-hover:bg-yellow-500/20 transition-colors">
+              <svg class="w-7 h-7 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+              </svg>
+            </div>
+            <div class="text-left">
+              <h3 class="text-xl font-game font-bold text-white group-hover:text-yellow-400 transition-colors">Endlos Modus</h3>
+              <p class="text-sm text-white/50 group-hover:text-white/70 transition-colors">Endlose Wellen mit Boni</p>
+            </div>
+          </div>
+          
+          <!-- Arrow -->
+          <div class="w-10 h-10 rounded-full bg-yellow-500/10 flex items-center justify-center group-hover:bg-yellow-500 group-hover:text-dark-bg transition-all">
+            <svg class="w-5 h-5 text-yellow-400 group-hover:text-dark-bg transition-colors transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </div>
+        
+        <!-- Shine Effect -->
+        <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+          <div class="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+        </div>
+      </button>
+
+      <!-- Single Player Button -->
+      <button 
+        (click)="startSinglePlayer()"
+        (mouseenter)="hoveredButton.set('single')"
+        (mouseleave)="hoveredButton.set(null)"
+        class="group relative overflow-hidden rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+        
+        <!-- Animated Border Gradient -->
+        <div class="absolute -inset-[1px] bg-gradient-to-r from-neon-blue via-neon-green to-neon-blue rounded-2xl opacity-70 group-hover:opacity-100 transition-opacity"
+          style="background-size: 200% 100%; animation: gradient-shift 3s linear infinite;">
+        </div>
+        
+        <!-- Button Background -->
+        <div class="absolute inset-[1px] bg-gradient-to-r from-dark-card via-dark-bg to-dark-card rounded-2xl"></div>
+        
+        <!-- Hover Glow -->
+        <div class="absolute inset-0 bg-gradient-to-r from-neon-blue/0 via-neon-blue/10 to-neon-blue/0 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
+        
+        <!-- Content -->
+        <div class="relative px-8 py-6 flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-xl bg-neon-blue/10 flex items-center justify-center group-hover:bg-neon-blue/20 transition-colors">
+              <svg class="w-7 h-7 text-neon-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+            </div>
+            <div class="text-left">
+              <h3 class="text-xl font-game font-bold text-white group-hover:text-neon-blue transition-colors">Training</h3>
+              <p class="text-sm text-white/50 group-hover:text-white/70 transition-colors">Gegen KI üben</p>
+            </div>
+          </div>
+          
+          <!-- Arrow -->
+          <div class="w-10 h-10 rounded-full bg-neon-blue/10 flex items-center justify-center group-hover:bg-neon-blue group-hover:text-dark-bg transition-all">
+            <svg class="w-5 h-5 text-neon-blue group-hover:text-dark-bg transition-colors transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </div>
+        
+        <!-- Shine Effect -->
+        <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+          <div class="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+        </div>
+      </button>
+
+      <!-- Multi Player Button -->
+      <button 
+        (click)="startMultiplayer()"
+        (mouseenter)="hoveredButton.set('multi')"
+        (mouseleave)="hoveredButton.set(null)"
+        class="group relative overflow-hidden rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+        
+        <!-- Animated Border Gradient -->
+        <div class="absolute -inset-[1px] bg-gradient-to-r from-neon-green via-neon-blue to-neon-green rounded-2xl opacity-70 group-hover:opacity-100 transition-opacity"
+          style="background-size: 200% 100%; animation: gradient-shift 3s linear infinite;">
+        </div>
+        
+        <!-- Button Background -->
+        <div class="absolute inset-[1px] bg-gradient-to-r from-dark-card via-dark-bg to-dark-card rounded-2xl"></div>
+        
+        <!-- Hover Glow -->
+        <div class="absolute inset-0 bg-gradient-to-r from-neon-green/0 via-neon-green/10 to-neon-green/0 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
+        
+        <!-- Content -->
+        <div class="relative px-8 py-6 flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-xl bg-neon-green/10 flex items-center justify-center group-hover:bg-neon-green/20 transition-colors">
+              <svg class="w-7 h-7 text-neon-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+              </svg>
+            </div>
+            <div class="text-left">
+              <h3 class="text-xl font-game font-bold text-white group-hover:text-neon-green transition-colors">Multiplayer</h3>
+              <p class="text-sm text-white/50 group-hover:text-white/70 transition-colors">Gegen Online-Gegner kämpfen</p>
+            </div>
+          </div>
+          
+          <!-- Arrow -->
+          <div class="w-10 h-10 rounded-full bg-neon-green/10 flex items-center justify-center group-hover:bg-neon-green group-hover:text-dark-bg transition-all">
+            <svg class="w-5 h-5 text-neon-green group-hover:text-dark-bg transition-colors transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </div>
+        
+        <!-- Shine Effect -->
+        <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+          <div class="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+        </div>
+      </button>
+    </div>
+
+    <!-- Quick Info -->
+    <div class="mt-16 flex items-center gap-8 text-white/30">
+      <div class="flex items-center gap-2">
+        <div class="w-2 h-2 rounded-full bg-neon-green animate-pulse"></div>
+        <span class="text-sm font-game">Online</span>
+      </div>
+      <div class="h-4 w-px bg-white/10"></div>
+      <div class="flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+        </svg>
+        <span class="text-sm font-game">Weltweit</span>
+      </div>
+      <div class="h-4 w-px bg-white/10"></div>
+      <div class="flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+        <span class="text-sm font-game">Real-time</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="relative z-10 py-6 text-center">
+    <p class="text-xs text-white/20 font-game tracking-wider">
+      © 2025 FIGHTER · Made with <span class="text-neon-red">♥</span>
+    </p>
+  </footer>
+</div>

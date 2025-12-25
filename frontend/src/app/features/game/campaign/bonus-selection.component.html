@@ -1,0 +1,78 @@
+<div class="fixed inset-0 bg-black/90 flex flex-col items-center justify-center z-50">
+  <!-- Victory text -->
+  <h1 class="text-5xl font-bold text-neon-green mb-4 font-orbitron tracking-wider animate-victory-glow">
+    SIEG
+  </h1>
+  
+  <p class="text-gray-400 mb-12 font-orbitron text-lg">
+    Wähle deine Belohnung
+  </p>
+  
+  <!-- Bonus cards -->
+  <div class="flex gap-6 mb-8">
+    @for (bonus of bonusOptions(); track bonus.id; let i = $index) {
+      <button
+        (click)="selectBonus(bonus)"
+        [class]="getCardClasses(bonus.rarity, selectedBonus()?.id === bonus.id)"
+        class="relative w-56 h-72 rounded-lg border-2 p-4 
+               flex flex-col items-center justify-between
+               transition-all duration-300 transform
+               hover:scale-105 hover:-translate-y-2"
+        [style.animation-delay]="(i * 150) + 'ms'"
+      >
+        <!-- Rarity label -->
+        <span 
+          class="absolute -top-3 px-3 py-1 text-xs font-orbitron uppercase tracking-wider rounded"
+          [class]="getRarityLabelClasses(bonus.rarity)"
+        >
+          {{ getRarityLabel(bonus.rarity) }}
+        </span>
+        
+        <!-- Icon -->
+        <div class="text-6xl mt-4">
+          {{ bonus.icon }}
+        </div>
+        
+        <!-- Name -->
+        <h3 class="text-lg font-bold text-white font-orbitron text-center">
+          {{ bonus.name }}
+        </h3>
+        
+        <!-- Description -->
+        <p class="text-sm text-gray-400 text-center mb-4">
+          {{ bonus.description }}
+        </p>
+        
+        <!-- Selection indicator -->
+        @if (selectedBonus()?.id === bonus.id) {
+          <div class="absolute inset-0 border-2 border-neon-green rounded-lg animate-pulse"></div>
+        }
+      </button>
+    }
+  </div>
+  
+  <!-- Confirm button -->
+  @if (selectedBonus()) {
+    <button
+      (click)="confirmSelection()"
+      class="px-12 py-4 bg-neon-green text-black font-orbitron text-xl
+             tracking-widest font-bold rounded
+             hover:bg-neon-green/80 transition-all duration-300
+             animate-bounce-subtle"
+    >
+      BESTÄTIGEN <span class="text-sm opacity-60">[SPACE]</span>
+    </button>
+  } @else {
+    <p class="text-gray-600 font-orbitron text-sm animate-pulse">
+      Klicke eine Karte zum Auswählen
+    </p>
+  }
+  
+  <!-- Skip option - more spacing above -->
+  <button
+    (click)="skipSelection()"
+    class="mt-12 text-gray-500 font-orbitron text-sm hover:text-gray-300 transition-colors"
+  >
+    Belohnung überspringen <span class="opacity-60">[ESC]</span>
+  </button>
+</div>

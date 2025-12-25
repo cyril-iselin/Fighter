@@ -1,0 +1,41 @@
+@keyframes victoryGlow {
+  0%, 100% { 
+    text-shadow: 0 0 20px rgba(0, 255, 136, 0.5),
+                 0 0 40px rgba(0, 255, 136, 0.3),
+                 0 0 60px rgba(0, 255, 136, 0.2);
+  }
+  50% { 
+    text-shadow: 0 0 30px rgba(0, 255, 136, 0.8),
+                 0 0 60px rgba(0, 255, 136, 0.5),
+                 0 0 90px rgba(0, 255, 136, 0.3);
+  }
+}
+
+@keyframes cardAppear {
+  from { 
+    opacity: 0; 
+    transform: translateY(40px) scale(0.8);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes bounceSubtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.animate-victory-glow {
+  animation: victoryGlow 2s ease-in-out infinite;
+}
+
+.animate-card-appear {
+  animation: cardAppear 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-bounce-subtle {
+  animation: bounceSubtle 1s ease-in-out infinite;
+}
