@@ -7,21 +7,19 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./app/features/menu').then(m => m.MainMenuComponent)
+    loadComponent: () => import('./app/features/menu/menu.component').then(m => m.MenuComponent)
   },
   {
-    path: 'play/:mode',
-    loadComponent: () => import('./app/features/game').then(m => m.FightGameComponent)
+    path: 'training',
+    loadComponent: () => import('./app/features/training/training.component').then(m => m.TrainingComponent)
   },
   {
-    path: 'campaign',
-    loadComponent: () => import('./app/features/game/campaign').then(m => m.CampaignComponent)
+    path: 'endless',
+    loadComponent: () => import('./app/features/endless/endless.component').then(m => m.EndlessComponent)
   },
   {
-    // Redirect /play without mode to online (backward compatible)
-    path: 'play',
-    redirectTo: 'play/online',
-    pathMatch: 'full'
+    path: 'leaderboard',
+    loadComponent: () => import('./app/features/leaderboard/leaderboard.component').then(m => m.LeaderboardComponent)
   },
   {
     path: '**',

@@ -1,0 +1,84 @@
+<!-- Training Mode: Canvas + Healthbar Components + Pause Menu Overlay -->
+<div class="relative w-full h-full">
+  <!-- Canvas Container -->
+  <div #canvasContainer class="w-full h-full"></div>
+
+  <!-- Pause Menu Overlay -->
+  @if (showPauseMenu()) {
+    <app-training-pause-menu
+      [playerLoadout]="playerLoadoutType()"
+      [aiLoadout]="aiLoadoutType()"
+      [aiEnabled]="aiEnabled()"
+      [debugActive]="debug()"
+      [timeScale]="timeScale()"
+      [tickCount]="tickCount()"
+      [fps]="fps()"
+      [currentBackground]="currentBackground()"
+      [availableAIs]="availableAIs()"
+      [selectedAIId]="selectedAIId()"
+      (resume)="resumeTraining()"
+      (resetMatch)="resetMatch()"
+      (toggleEventLog)="toggleEventLog()"
+      (toggleDebug)="onToggleDebug()"
+      (toggleAI)="onToggleAI()"
+      (setPlayerLoadout)="onSetPlayerLoadout($event)"
+      (setAILoadout)="onSetAILoadout($event)"
+      (cycleTimeScale)="onCycleTimeScale()"
+      (setBackground)="onSetBackground($event)"
+      (selectAI)="onSelectAI($event)"
+      (exit)="onExit()"
+    />
+  }
+
+  <!-- Event Log Overlay (only when not paused) -->
+  @if (showEventLog() && !paused()) {
+    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-40" (click)="showEventLog.set(false)">
+      <div class="max-w-4xl w-full max-h-[80vh] overflow-y-auto"
+           (click)="$event.stopPropagation()">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-4">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold">Combat Event Log</h2>
+            <button (click)="showEventLog.set(false)"
+                    class="px-4 py-2 bg-gray-300 dark:bg-gray-700 rounded hover:bg-gray-400 dark:hover:bg-gray-600">
+              Close
+            </button>
+          </div>
+          <ul class="space-y-2">
+            @for (event of events(); track $index) {
+              <li class="p-2 bg-gray-100 dark:bg-gray-900 rounded">{{ event }}</li>
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Player Healthbar (Top Left) -->
+  <div class="absolute top-6 left-6 w-80 z-10">
+    <app-player-healthbar
+      [health]="fighter0().health"
+      [maxHealth]="fighter0().maxHealth"
+      [specialMeter]="fighter0().specialMeter"
+      [maxSpecial]="fighter0().maxSpecialMeter"
+      [state]="fighter0().state"
+      [parryWindowActive]="parryWindowActive()"
+      [characterName]="playerCharacter()"
+      [loadoutType]="playerLoadoutType()"
+    />
+  </div>
+
+  <!-- AI Healthbar (Top Right) -->
+  <div class="absolute top-6 right-6 w-80 z-10">
+    <app-ai-healthbar
+      [health]="fighter1().health"
+      [maxHealth]="fighter1().maxHealth"
+      [stunMeter]="fighter1().pressureMeter"
+      [maxStun]="fighter1().maxPressureMeter"
+      [state]="fighter1().state"
+      [characterName]="aiCharacter()"
+      [loadoutType]="aiLoadoutType()"
+      [aiEnabled]="aiEnabled()"
+      [superArmorActive]="fighter1().superArmorActive"
+    />
+  </div>
+</div>

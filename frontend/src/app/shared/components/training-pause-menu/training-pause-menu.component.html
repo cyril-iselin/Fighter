@@ -1,0 +1,416 @@
+<div class="fixed inset-0 bg-dark-bg/95 backdrop-blur-md flex items-center justify-center z-50 p-4" (click)="$event.stopPropagation()">
+  
+  <!-- Animated Background (same as main menu) -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute inset-0 opacity-5"
+      style="background-image: linear-gradient(rgba(0,255,136,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,136,0.1) 1px, transparent 1px); background-size: 50px 50px;">
+    </div>
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-neon-green/10 rounded-full blur-3xl animate-float"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-neon-red/10 rounded-full blur-3xl animate-float" style="animation-delay: -1.5s;"></div>
+    <div class="absolute inset-0 opacity-[0.02]"
+      style="background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px);">
+    </div>
+  </div>
+
+  <div class="relative z-10 max-w-4xl w-full">
+    
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-12">
+      <!-- Title (Left) -->
+      <div>
+        <h1 class="relative">
+          <span class="block text-4xl md:text-5xl font-black font-game tracking-wider text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/50">
+            TRAINING
+          </span>
+          <span class="absolute inset-0 text-4xl md:text-5xl font-black font-game tracking-wider text-neon-green blur-xl opacity-30">
+            TRAINING
+          </span>
+        </h1>
+        <div class="flex items-center gap-2 mt-2">
+          <div class="w-2 h-2 rounded-full bg-neon-green animate-pulse"></div>
+          <span class="text-sm font-game text-white/40 tracking-widest uppercase">Paused</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons (Right) -->
+      <div class="flex gap-3">
+        <button 
+          (click)="exit.emit()"
+          class="group relative overflow-hidden rounded-xl transition-all duration-300 hover:scale-105 active:scale-95">
+          <div class="absolute -inset-[1px] bg-gradient-to-r from-gray-600 to-gray-500 rounded-xl opacity-70 group-hover:opacity-100 transition-opacity"></div>
+          <div class="absolute inset-[1px] bg-gradient-to-r from-dark-card via-dark-bg to-dark-card rounded-xl"></div>
+          <div class="relative px-6 py-3 flex items-center gap-2">
+            <span class="text-xl">←</span>
+            <span class="font-game font-bold">Menu</span>
+          </div>
+        </button>
+
+        <button 
+          (click)="resetMatch.emit(); $event.stopPropagation()"
+          class="group relative overflow-hidden rounded-xl transition-all duration-300 hover:scale-105 active:scale-95">
+          <div class="absolute -inset-[1px] bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl opacity-70 group-hover:opacity-100 transition-opacity"></div>
+          <div class="absolute inset-[1px] bg-gradient-to-r from-dark-card via-dark-bg to-dark-card rounded-xl"></div>
+          <div class="relative px-6 py-3 flex items-center gap-2">
+            <span class="text-xl">🔄</span>
+            <span class="font-game font-bold group-hover:text-orange-400 transition-colors">Reset</span>
+          </div>
+        </button>
+        
+        <button 
+          (click)="onResumeClick($event); $event.stopPropagation()"
+          class="group relative overflow-hidden rounded-xl transition-all duration-300 hover:scale-105 active:scale-95">
+          <div class="absolute -inset-[1px] bg-gradient-to-r from-neon-green via-neon-blue to-neon-green rounded-xl opacity-70 group-hover:opacity-100 transition-opacity"
+            style="background-size: 200% 100%; animation: gradient-shift 3s linear infinite;"></div>
+          <div class="absolute inset-[1px] bg-gradient-to-r from-dark-card via-dark-bg to-dark-card rounded-xl"></div>
+          <div class="absolute inset-0 bg-gradient-to-r from-neon-green/0 via-neon-green/10 to-neon-green/0 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl"></div>
+          <div class="relative px-8 py-3 flex items-center gap-2">
+            <span class="text-xl">▶️</span>
+            <span class="font-game font-bold group-hover:text-neon-green transition-colors">Resume</span>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="grid grid-cols-3 gap-4 mb-8">
+      <div class="group relative overflow-hidden rounded-xl transition-all duration-300">
+        <div class="absolute -inset-[1px] bg-gradient-to-r from-neon-blue/50 to-neon-green/50 rounded-xl opacity-50"></div>
+        <div class="absolute inset-[1px] bg-dark-card rounded-xl"></div>
+        <div class="relative p-4 text-center">
+          <div class="text-sm font-game text-white/40 uppercase tracking-wider mb-1">Tick</div>
+          <div class="text-3xl font-game font-bold text-neon-blue">{{ tickCount }}</div>
+        </div>
+      </div>
+      
+      <div class="group relative overflow-hidden rounded-xl transition-all duration-300">
+        <div class="absolute -inset-[1px] bg-gradient-to-r from-neon-green/50 to-neon-blue/50 rounded-xl opacity-50"></div>
+        <div class="absolute inset-[1px] bg-dark-card rounded-xl"></div>
+        <div class="relative p-4 text-center">
+          <div class="text-sm font-game text-white/40 uppercase tracking-wider mb-1">FPS</div>
+          <div class="text-3xl font-game font-bold text-neon-green">{{ fps }}</div>
+        </div>
+      </div>
+      
+      <div class="group relative overflow-hidden rounded-xl transition-all duration-300">
+        <div class="absolute -inset-[1px] bg-gradient-to-r from-yellow-500/50 to-orange-500/50 rounded-xl opacity-50"></div>
+        <div class="absolute inset-[1px] bg-dark-card rounded-xl"></div>
+        <div class="relative p-4 text-center">
+          <div class="text-sm font-game text-white/40 uppercase tracking-wider mb-1">Speed</div>
+          <div class="text-3xl font-game font-bold text-yellow-400">{{ timeScale }}x</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Menu Sections -->
+    <div class="grid grid-cols-2 gap-4">
+      
+      <!-- Player Loadout -->
+      <div>
+        <div class="flex items-center gap-2 mb-2">
+          <div class="w-2 h-2 bg-neon-blue rounded-full"></div>
+          <h3 class="text-sm font-game font-bold text-neon-blue uppercase tracking-wide">Player Loadout</h3>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <button 
+            (click)="setPlayerLoadout.emit('bare')"
+            class="group relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+            <div class="absolute -inset-[1px] rounded-lg opacity-70 group-hover:opacity-100 transition-opacity"
+              [class.bg-gradient-to-r]="playerLoadout === 'bare'"
+              [class.from-neon-blue]="playerLoadout === 'bare'"
+              [class.via-neon-green]="playerLoadout === 'bare'"
+              [class.to-neon-blue]="playerLoadout === 'bare'"
+              [class.bg-gray-700]="playerLoadout !== 'bare'"
+              [style.background-size]="playerLoadout === 'bare' ? '200% 100%' : ''"
+              [style.animation]="playerLoadout === 'bare' ? 'gradient-shift 3s linear infinite' : ''">
+            </div>
+            <div class="absolute inset-[1px] bg-gradient-to-r from-dark-card via-dark-bg to-dark-card rounded-lg"></div>
+            <div class="relative px-3 py-2 flex items-center justify-center gap-2">
+              <span class="text-lg">👊</span>
+              <span class="font-game text-xs font-bold" [class.text-neon-blue]="playerLoadout === 'bare'">Bare</span>
+            </div>
+          </button>
+          
+          <button 
+            (click)="setPlayerLoadout.emit('sword')"
+            class="group relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+            <div class="absolute -inset-[1px] rounded-lg opacity-70 group-hover:opacity-100 transition-opacity"
+              [class.bg-gradient-to-r]="playerLoadout === 'sword'"
+              [class.from-neon-blue]="playerLoadout === 'sword'"
+              [class.via-neon-green]="playerLoadout === 'sword'"
+              [class.to-neon-blue]="playerLoadout === 'sword'"
+              [class.bg-gray-700]="playerLoadout !== 'sword'"
+              [style.background-size]="playerLoadout === 'sword' ? '200% 100%' : ''"
+              [style.animation]="playerLoadout === 'sword' ? 'gradient-shift 3s linear infinite' : ''">
+            </div>
+            <div class="absolute inset-[1px] bg-gradient-to-r from-dark-card via-dark-bg to-dark-card rounded-lg"></div>
+            <div class="relative px-3 py-2 flex items-center justify-center gap-2">
+              <span class="text-lg">⚔️</span>
+              <span class="font-game text-xs font-bold" [class.text-neon-blue]="playerLoadout === 'sword'">Sword</span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- AI Loadout & Toggle -->
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <div class="w-2 h-2 bg-neon-red rounded-full"></div>
+            <h3 class="text-sm font-game font-bold text-neon-red uppercase tracking-wide">AI Loadout</h3>
+          </div>
+          <button 
+            (click)="toggleAI.emit()"
+            class="group relative overflow-hidden rounded-md transition-all duration-300 hover:scale-105">
+            <div class="absolute -inset-[1px] rounded-md"
+              [class.bg-neon-green]="aiEnabled"
+              [class.bg-gray-600]="!aiEnabled">
+            </div>
+            <div class="absolute inset-[1px] bg-dark-card rounded-md"></div>
+            <div class="relative px-2 py-1 font-game font-bold text-xs"
+              [class.text-neon-green]="aiEnabled"
+              [class.text-gray-400]="!aiEnabled">
+              {{ aiEnabled ? '✓' : '✗' }}
+            </div>
+          </button>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <button 
+            (click)="setAILoadout.emit('bare')"
+            class="group relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+            <div class="absolute -inset-[1px] rounded-lg opacity-70 group-hover:opacity-100 transition-opacity"
+              [class.bg-gradient-to-r]="aiLoadout === 'bare'"
+              [class.from-neon-red]="aiLoadout === 'bare'"
+              [class.via-orange-500]="aiLoadout === 'bare'"
+              [class.to-neon-red]="aiLoadout === 'bare'"
+              [class.bg-gray-700]="aiLoadout !== 'bare'"
+              [style.background-size]="aiLoadout === 'bare' ? '200% 100%' : ''"
+              [style.animation]="aiLoadout === 'bare' ? 'gradient-shift 3s linear infinite' : ''">
+            </div>
+            <div class="absolute inset-[1px] bg-gradient-to-r from-dark-card via-dark-bg to-dark-card rounded-lg"></div>
+            <div class="relative px-3 py-2 flex items-center justify-center gap-2">
+              <span class="text-lg">👊</span>
+              <span class="font-game text-xs font-bold" [class.text-neon-red]="aiLoadout === 'bare'">Bare</span>
+            </div>
+          </button>
+          
+          <button 
+            (click)="setAILoadout.emit('sword')"
+            class="group relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+            <div class="absolute -inset-[1px] rounded-lg opacity-70 group-hover:opacity-100 transition-opacity"
+              [class.bg-gradient-to-r]="aiLoadout === 'sword'"
+              [class.from-neon-red]="aiLoadout === 'sword'"
+              [class.via-orange-500]="aiLoadout === 'sword'"
+              [class.to-neon-red]="aiLoadout === 'sword'"
+              [class.bg-gray-700]="aiLoadout !== 'sword'"
+              [style.background-size]="aiLoadout === 'sword' ? '200% 100%' : ''"
+              [style.animation]="aiLoadout === 'sword' ? 'gradient-shift 3s linear infinite' : ''">
+            </div>
+            <div class="absolute inset-[1px] bg-gradient-to-r from-dark-card via-dark-bg to-dark-card rounded-lg"></div>
+            <div class="relative px-3 py-2 flex items-center justify-center gap-2">
+              <span class="text-lg">⚔️</span>
+              <span class="font-game text-xs font-bold" [class.text-neon-red]="aiLoadout === 'sword'">Sword</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- AI Brain Selection (full width below loadouts) -->
+    @if (availableAIs.length > 0) {
+      <div class="mt-4">
+        <div class="flex items-center gap-2 mb-2">
+          <div class="w-2 h-2 bg-purple-400 rounded-full"></div>
+          <h4 class="text-sm font-game font-bold text-purple-400 uppercase tracking-wide">AI Brain</h4>
+        </div>
+        <app-ai-selector
+          [availableAIs]="availableAIs"
+          [selectedId]="selectedAIId"
+          (selectAI)="selectAI.emit($event)">
+        </app-ai-selector>
+      </div>
+    }
+
+    <!-- Debug Options -->
+    <div class="mt-6">
+      <div class="flex items-center gap-2 mb-4">
+        <div class="w-3 h-3 bg-yellow-400 rounded-full"></div>
+        <h3 class="text-lg font-game font-bold text-yellow-400 uppercase tracking-wide">Debug & Settings</h3>
+      </div>
+      <div class="grid grid-cols-3 gap-2">
+        <button 
+          (click)="toggleDebug.emit()"
+          class="group relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+          <div class="absolute -inset-[1px] rounded-lg opacity-70 group-hover:opacity-100 transition-opacity"
+            [class.bg-gradient-to-r]="debugActive"
+            [class.from-yellow-500]="debugActive"
+            [class.to-orange-500]="debugActive"
+            [class.bg-gray-700]="!debugActive">
+          </div>
+          <div class="absolute inset-[1px] bg-gradient-to-r from-dark-card via-dark-bg to-dark-card rounded-lg"></div>
+          <div class="relative px-3 py-2 flex items-center justify-center gap-2">
+            <span class="text-lg">🐛</span>
+            <span class="font-game text-xs font-bold" [class.text-yellow-400]="debugActive">Debug</span>
+          </div>
+        </button>
+        
+        <button 
+          (click)="toggleEventLog.emit()"
+          class="group relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+          <div class="absolute -inset-[1px] bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg opacity-70 group-hover:opacity-100 transition-opacity"></div>
+          <div class="absolute inset-[1px] bg-gradient-to-r from-dark-card via-dark-bg to-dark-card rounded-lg"></div>
+          <div class="relative px-3 py-2 flex items-center justify-center gap-2">
+            <span class="text-lg">📜</span>
+            <span class="font-game text-xs font-bold group-hover:text-purple-400 transition-colors">Log</span>
+          </div>
+        </button>
+        
+        <button 
+          (click)="cycleTimeScale.emit()"
+          class="group relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+          <div class="absolute -inset-[1px] bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-lg opacity-70 group-hover:opacity-100 transition-opacity"></div>
+          <div class="absolute inset-[1px] bg-gradient-to-r from-dark-card via-dark-bg to-dark-card rounded-lg"></div>
+          <div class="relative px-3 py-2 flex items-center justify-center gap-2">
+            <span class="text-lg">⚡</span>
+            <span class="font-game text-xs font-bold group-hover:text-indigo-400 transition-colors">{{ timeScale }}x</span>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Background Selection -->
+    <div class="mt-4">
+      <div class="flex items-center gap-2 mb-2">
+        <div class="w-2 h-2 bg-purple-400 rounded-full"></div>
+        <h3 class="text-xs font-game font-bold text-purple-400 uppercase tracking-wide">Background</h3>
+      </div>
+      <div class="grid grid-cols-7 gap-1">
+        <button 
+          (click)="setBackground.emit('city1')"
+          class="group relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+          <div class="absolute -inset-[1px] rounded-lg opacity-70 group-hover:opacity-100 transition-opacity"
+            [class.bg-gradient-to-r]="currentBackground === 'city1'"
+            [class.from-neon-blue]="currentBackground === 'city1'"
+            [class.via-neon-green]="currentBackground === 'city1'"
+            [class.to-neon-blue]="currentBackground === 'city1'"
+            [class.bg-gray-700]="currentBackground !== 'city1'"
+            [style.background-size]="currentBackground === 'city1' ? '200% 100%' : ''"
+            [style.animation]="currentBackground === 'city1' ? 'gradient-shift 3s linear infinite' : ''">
+          </div>
+          <div class="absolute inset-[1px] bg-gradient-to-r from-dark-card via-dark-bg to-dark-card rounded-lg"></div>
+          <div class="relative px-1 py-1 flex flex-col items-center justify-center">
+            <span class="text-base">🏙️</span>
+          </div>
+        </button>
+        
+        <button 
+          (click)="setBackground.emit('city2')"
+          class="group relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+          <div class="absolute -inset-[1px] rounded-lg opacity-70 group-hover:opacity-100 transition-opacity"
+            [class.bg-gradient-to-r]="currentBackground === 'city2'"
+            [class.from-cyan-500]="currentBackground === 'city2'"
+            [class.via-blue-500]="currentBackground === 'city2'"
+            [class.to-cyan-500]="currentBackground === 'city2'"
+            [class.bg-gray-700]="currentBackground !== 'city2'"
+            [style.background-size]="currentBackground === 'city2' ? '200% 100%' : ''"
+            [style.animation]="currentBackground === 'city2' ? 'gradient-shift 3s linear infinite' : ''">
+          </div>
+          <div class="absolute inset-[1px] bg-gradient-to-r from-dark-card via-dark-bg to-dark-card rounded-lg"></div>
+          <div class="relative px-1 py-1 flex flex-col items-center justify-center">
+            <span class="text-base">🌃</span>
+          </div>
+        </button>
+        
+        <button 
+          (click)="setBackground.emit('city3')"
+          class="group relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+          <div class="absolute -inset-[1px] rounded-lg opacity-70 group-hover:opacity-100 transition-opacity"
+            [class.bg-gradient-to-r]="currentBackground === 'city3'"
+            [class.from-indigo-500]="currentBackground === 'city3'"
+            [class.via-purple-500]="currentBackground === 'city3'"
+            [class.to-indigo-500]="currentBackground === 'city3'"
+            [class.bg-gray-700]="currentBackground !== 'city3'"
+            [style.background-size]="currentBackground === 'city3' ? '200% 100%' : ''"
+            [style.animation]="currentBackground === 'city3' ? 'gradient-shift 3s linear infinite' : ''">
+          </div>
+          <div class="absolute inset-[1px] bg-gradient-to-r from-dark-card via-dark-bg to-dark-card rounded-lg"></div>
+          <div class="relative px-1 py-1 flex flex-col items-center justify-center">
+            <span class="text-base">🌆</span>
+          </div>
+        </button>
+        
+        <button 
+          (click)="setBackground.emit('city4')"
+          class="group relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+          <div class="absolute -inset-[1px] rounded-lg opacity-70 group-hover:opacity-100 transition-opacity"
+            [class.bg-gradient-to-r]="currentBackground === 'city4'"
+            [class.from-sky-500]="currentBackground === 'city4'"
+            [class.via-blue-400]="currentBackground === 'city4'"
+            [class.to-sky-500]="currentBackground === 'city4'"
+            [class.bg-gray-700]="currentBackground !== 'city4'"
+            [style.background-size]="currentBackground === 'city4' ? '200% 100%' : ''"
+            [style.animation]="currentBackground === 'city4' ? 'gradient-shift 3s linear infinite' : ''">
+          </div>
+          <div class="absolute inset-[1px] bg-gradient-to-r from-dark-card via-dark-bg to-dark-card rounded-lg"></div>
+          <div class="relative px-1 py-1 flex flex-col items-center justify-center">
+            <span class="text-base">🌇</span>
+          </div>
+        </button>
+        
+        <button 
+          (click)="setBackground.emit('forrest')"
+          class="group relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+          <div class="absolute -inset-[1px] rounded-lg opacity-70 group-hover:opacity-100 transition-opacity"
+            [class.bg-gradient-to-r]="currentBackground === 'forrest'"
+            [class.from-green-500]="currentBackground === 'forrest'"
+            [class.via-green-600]="currentBackground === 'forrest'"
+            [class.to-green-500]="currentBackground === 'forrest'"
+            [class.bg-gray-700]="currentBackground !== 'forrest'"
+            [style.background-size]="currentBackground === 'forrest' ? '200% 100%' : ''"
+            [style.animation]="currentBackground === 'forrest' ? 'gradient-shift 3s linear infinite' : ''">
+          </div>
+          <div class="absolute inset-[1px] bg-gradient-to-r from-dark-card via-dark-bg to-dark-card rounded-lg"></div>
+          <div class="relative px-1 py-1 flex flex-col items-center justify-center">
+            <span class="text-base">🌲</span>
+          </div>
+        </button>
+        
+        <button 
+          (click)="setBackground.emit('castle')"
+          class="group relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+          <div class="absolute -inset-[1px] rounded-lg opacity-70 group-hover:opacity-100 transition-opacity"
+            [class.bg-gradient-to-r]="currentBackground === 'castle'"
+            [class.from-purple-600]="currentBackground === 'castle'"
+            [class.via-pink-500]="currentBackground === 'castle'"
+            [class.to-purple-600]="currentBackground === 'castle'"
+            [class.bg-gray-700]="currentBackground !== 'castle'"
+            [style.background-size]="currentBackground === 'castle' ? '200% 100%' : ''"
+            [style.animation]="currentBackground === 'castle' ? 'gradient-shift 3s linear infinite' : ''">
+          </div>
+          <div class="absolute inset-[1px] bg-gradient-to-r from-dark-card via-dark-bg to-dark-card rounded-lg"></div>
+          <div class="relative px-1 py-1 flex flex-col items-center justify-center">
+            <span class="text-base">🏰</span>
+          </div>
+        </button>
+        
+        <button 
+          (click)="setBackground.emit('destroyedCity')"
+          class="group relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+          <div class="absolute -inset-[1px] rounded-lg opacity-70 group-hover:opacity-100 transition-opacity"
+            [class.bg-gradient-to-r]="currentBackground === 'destroyedCity'"
+            [class.from-red-600]="currentBackground === 'destroyedCity'"
+            [class.via-orange-600]="currentBackground === 'destroyedCity'"
+            [class.to-red-600]="currentBackground === 'destroyedCity'"
+            [class.bg-gray-700]="currentBackground !== 'destroyedCity'"
+            [style.background-size]="currentBackground === 'destroyedCity' ? '200% 100%' : ''"
+            [style.animation]="currentBackground === 'destroyedCity' ? 'gradient-shift 3s linear infinite' : ''">
+          </div>
+          <div class="absolute inset-[1px] bg-gradient-to-r from-dark-card via-dark-bg to-dark-card rounded-lg"></div>
+          <div class="relative px-1 py-1 flex flex-col items-center justify-center">
+            <span class="text-base">🏚️</span>
+          </div>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,306 +1,316 @@
 stickman fighter.png
-size:2676,264
+size:700,1008
 filter:Linear,Linear
 pma:true
 scale:0.5
 stickman/arm_L
-bounds:1151,220,218,42
+bounds:337,683,218,42
 stickman/arm_R
-bounds:1371,221,217,41
-stickman/arm_stroke_L
-bounds:248,140,235,58
-stickman/arm_stroke_R
-bounds:642,205,236,57
-stickman/body
-bounds:1791,227,35,192
+bounds:270,13,217,41
 rotate:90
+stickman/arm_stroke_L
+bounds:375,535,235,58
+stickman/arm_stroke_R
+bounds:455,896,236,57
+stickman/body
+bounds:102,27,35,192
 stickman/body_stroke
-bounds:1590,211,51,199
+bounds:455,955,51,198
 offsets:0,4,51,207
 rotate:90
 stickman/eyes-A
-bounds:867,2,85,25
-stickman/eyes-B
-bounds:2153,2,52,16
+bounds:471,596,85,25
 rotate:90
+stickman/eyes-B
+bounds:145,596,52,16
 stickman/head
-bounds:1249,92,126,126
+bounds:209,682,126,126
 stickman/head_stroke
-bounds:2479,121,141,141
+bounds:2,865,141,141
 stickman/leg_L
-bounds:2,3,47,228
+bounds:314,227,47,228
 rotate:90
 stickman/leg_R
-bounds:880,197,46,228
-rotate:90
+bounds:222,2,46,228
 stickman/leg_stroke_L
-bounds:396,200,62,244
+bounds:209,944,62,244
 rotate:90
 stickman/leg_stroke_R
-bounds:2,135,63,244
+bounds:2,529,63,244
 rotate:90
 stickman/mouth
-bounds:2259,21,61,23
+bounds:557,604,61,23
 stickman/shadow
-bounds:880,245,269,17
+bounds:2,594,269,17
+rotate:90
 vfx/energy radial/energy radial
 index:0
-bounds:867,29,81,80
+bounds:314,276,81,80
 offsets:43,45,167,167
-vfx/energy radial/energy radial
-index:1
-bounds:1034,8,80,80
-offsets:43,44,167,167
+rotate:90
 vfx/energy radial/energy radial
 index:2
-bounds:1249,10,81,80
+bounds:139,23,81,80
 offsets:43,42,167,167
+rotate:90
 vfx/energy radial/energy radial
 index:3
-bounds:1332,10,81,80
+bounds:503,347,81,80
 offsets:44,45,167,167
 vfx/energy radial/energy radial
 index:4
-bounds:1415,11,81,80
+bounds:404,144,81,80
 offsets:44,44,167,167
+rotate:90
 vfx/energy radial/energy radial
 index:5
-bounds:1498,4,81,80
+bounds:486,87,81,80
 offsets:42,44,167,167
+rotate:90
 vfx/energy radial/energy radial
-index:6
-bounds:1939,50,81,79
-offsets:43,46,167,167
+index:1
+bounds:568,11,80,80
+offsets:43,44,167,167
 vfx/energy radial/energy radial
 index:7
-bounds:2022,49,80,80
+bounds:400,62,80,80
 offsets:41,46,167,167
-vfx/energy ray/energy ray
-index:5
-bounds:382,2,136,54
-offsets:0,58,167,167
+vfx/energy radial/energy radial
+index:6
+bounds:482,4,81,79
+offsets:43,46,167,167
 rotate:90
 vfx/energy ray/energy ray
-index:7
-bounds:485,100,167,98
-offsets:0,41,167,167
+index:15
+bounds:21,665,117,41
+offsets:12,61,167,167
 vfx/energy ray/energy ray
-index:10
-bounds:654,103,167,100
-offsets:0,33,167,167
-vfx/energy ray/energy ray
-index:6
-bounds:713,3,152,98
-offsets:0,36,167,167
+index:4
+bounds:98,601,45,62
+offsets:0,54,167,167
 vfx/energy ray/energy ray
 index:8
-bounds:1985,177,167,85
+bounds:209,595,167,85
 offsets:0,46,167,167
 vfx/energy ray/energy ray
 index:9
-bounds:2154,181,166,81
+bounds:500,813,166,81
 offsets:0,47,167,167
 vfx/energy ray/energy ray
-index:11
-bounds:2154,125,166,54
-offsets:1,56,167,167
+index:10
+bounds:236,359,167,100
+offsets:0,33,167,167
 vfx/energy ray/energy ray
-index:12
-bounds:2322,96,155,46
-offsets:1,59,167,167
+index:7
+bounds:122,221,167,98
+offsets:0,41,167,167
+rotate:90
 vfx/energy ray/energy ray
-index:13
-bounds:2622,117,145,44
-offsets:0,59,167,167
+index:6
+bounds:2,133,152,98
+offsets:0,36,167,167
+rotate:90
+vfx/energy ray/energy ray
+index:2
+bounds:491,477,56,80
+offsets:0,47,167,167
 rotate:90
 vfx/energy ray/energy ray
 index:14
-bounds:1985,131,128,44
+bounds:2,3,128,44
 offsets:3,59,167,167
+rotate:90
 vfx/energy ray/energy ray
-index:15
-bounds:2479,78,117,41
-offsets:12,61,167,167
+index:1
+bounds:48,65,52,66
+offsets:0,54,167,167
+vfx/energy ray/energy ray
+index:11
+bounds:396,282,166,54
+offsets:1,56,167,167
+vfx/energy ray/energy ray
+index:12
+bounds:503,429,155,46
+offsets:1,59,167,167
+vfx/energy ray/energy ray
+index:13
+bounds:586,282,145,44
+offsets:0,59,167,167
+rotate:90
+vfx/energy ray/energy ray
+index:5
+bounds:632,291,136,54
+offsets:0,58,167,167
+rotate:90
 vfx/energy ray/energy ray
 index:16
-bounds:1771,4,112,36
+bounds:636,177,112,36
 offsets:14,64,167,167
 rotate:90
 vfx/energy ray/energy ray
-index:1
-bounds:1581,2,52,66
-offsets:0,54,167,167
-vfx/energy ray/energy ray
-index:4
-bounds:1635,6,45,62
-offsets:0,54,167,167
-vfx/energy ray/energy ray
-index:0
-bounds:2017,2,45,46
-offsets:0,63,167,167
-rotate:90
-vfx/energy ray/energy ray
-index:2
-bounds:2181,67,56,80
-offsets:0,47,167,167
-rotate:90
-vfx/energy ray/energy ray
 index:3
-bounds:2181,15,50,76
+bounds:388,10,50,76
 offsets:0,49,167,167
 rotate:90
+vfx/energy ray/energy ray
+index:0
+bounds:650,45,45,46
+offsets:0,63,167,167
 vfx/muzzle flash pistol/muzzle flash pistol
 index:3
-bounds:438,2,138,96
+bounds:557,629,138,96
 offsets:17,38,167,167
 vfx/muzzle flash pistol/muzzle flash pistol
-index:4
-bounds:578,2,133,96
-offsets:25,39,167,167
-vfx/muzzle flash pistol/muzzle flash pistol
 index:2
-bounds:1504,86,133,76
+bounds:564,735,133,76
 offsets:11,49,167,167
+vfx/muzzle flash pistol/muzzle flash pistol
+index:4
+bounds:405,338,133,96
+offsets:25,39,167,167
 rotate:90
 vfx/muzzle flash pistol/muzzle flash pistol
 index:5
-bounds:1582,119,125,90
+bounds:222,232,125,90
 offsets:29,42,167,167
-vfx/muzzle flash pistol/muzzle flash pistol
-index:1
-bounds:1582,70,125,47
-offsets:11,61,167,167
-vfx/muzzle flash pistol/muzzle flash pistol
-index:6
-bounds:950,33,55,82
-offsets:49,46,167,167
 rotate:90
 vfx/muzzle flash pistol/muzzle flash pistol
 index:0
-bounds:2413,46,54,48
+bounds:48,9,54,48
 offsets:4,61,167,167
+rotate:90
+vfx/muzzle flash pistol/muzzle flash pistol
+index:1
+bounds:573,486,125,47
+offsets:11,61,167,167
+vfx/muzzle flash pistol/muzzle flash pistol
+index:6
+bounds:636,93,55,82
+offsets:49,46,167,167
 vfx/muzzle flash rifle/muzzle flash rifle
 index:0
-bounds:248,2,132,136
+bounds:209,810,132,136
 offsets:0,26,167,167
+rotate:90
 vfx/muzzle flash rifle/muzzle flash rifle
 index:2
-bounds:823,111,84,151
+bounds:347,810,84,151
 offsets:1,8,167,167
 rotate:90
 vfx/muzzle flash rifle/muzzle flash rifle
 index:1
-bounds:976,90,137,105
+bounds:129,390,137,105
 offsets:2,23,167,167
+rotate:90
 vfx/muzzle flash uzi/muzzle flash uzi
-index:3
-bounds:1709,118,85,91
-offsets:4,52,167,167
+index:0
+bounds:21,596,75,67
+offsets:0,50,167,167
 vfx/muzzle flash uzi/muzzle flash uzi
 index:4
-bounds:1796,124,112,101
+bounds:2,287,112,101
 offsets:5,44,167,167
+rotate:90
 vfx/muzzle flash uzi/muzzle flash uzi
-index:1
-bounds:1910,147,73,78
-offsets:1,45,167,167
+index:3
+bounds:378,596,85,91
+offsets:4,52,167,167
+rotate:90
 vfx/muzzle flash uzi/muzzle flash uzi
 index:2
-bounds:1709,2,114,60
+bounds:375,473,114,60
 offsets:3,56,167,167
-rotate:90
 vfx/muzzle flash uzi/muzzle flash uzi
-index:0
-bounds:2104,56,75,67
-offsets:0,50,167,167
+index:1
+bounds:313,10,73,78
+offsets:1,45,167,167
 vfx/slash/slash
 index:0
-bounds:1115,93,125,132
+bounds:248,461,125,132
 offsets:5,0,130,132
-rotate:90
 vfx/slash/slash
 index:1
-bounds:1377,93,125,126
+bounds:2,401,125,126
 offsets:2,0,130,132
 vfx/slash/slash
-index:2
-bounds:1809,12,110,90
-offsets:9,0,130,132
+index:3
+bounds:498,604,77,57
+offsets:26,17,130,132
 rotate:90
 vfx/slash/slash
+index:2
+bounds:544,170,110,90
+offsets:9,0,130,132
+rotate:90
+vfx/smoke right/smoke right
+index:10
+bounds:655,958,48,43
+offsets:80,70,167,167
+rotate:90
+vfx/smoke right/smoke right
+index:7
+bounds:347,896,76,46
+offsets:48,71,167,167
+vfx/smoke right/smoke right
+index:12
+bounds:425,914,16,28
+offsets:112,69,167,167
+vfx/smoke right/smoke right
+index:0
+bounds:105,343,56,15
+offsets:16,80,167,167
+rotate:90
+vfx/smoke right/smoke right
+index:1
+bounds:668,813,81,27
+offsets:19,76,167,167
+rotate:90
+vfx/smoke right/smoke right
+index:2
+bounds:620,537,90,36
+offsets:23,76,167,167
+rotate:90
+vfx/smoke right/smoke right
 index:3
-bounds:2263,46,77,57
-offsets:26,17,130,132
+bounds:658,538,89,39
+offsets:27,75,167,167
+rotate:90
+vfx/smoke right/smoke right
+index:11
+bounds:660,438,46,36
+offsets:82,69,167,167
 rotate:90
 vfx/smoke right/smoke right
 index:6
-bounds:1116,2,89,44
+bounds:313,181,89,44
 offsets:33,73,167,167
-rotate:90
 vfx/smoke right/smoke right
 index:5
-bounds:1162,2,89,42
+bounds:313,90,89,42
 offsets:32,74,167,167
 rotate:90
 vfx/smoke right/smoke right
 index:4
-bounds:1206,2,89,41
+bounds:357,90,89,41
 offsets:30,74,167,167
 rotate:90
 vfx/smoke right/smoke right
-index:2
-bounds:1901,32,90,36
-offsets:23,76,167,167
-rotate:90
-vfx/smoke right/smoke right
-index:7
-bounds:1939,2,76,46
-offsets:48,71,167,167
-vfx/smoke right/smoke right
-index:3
-bounds:2322,55,89,39
-offsets:27,75,167,167
-vfx/smoke right/smoke right
 index:8
-bounds:2104,2,52,47
+bounds:486,178,52,47
 offsets:74,70,167,167
-rotate:90
 vfx/smoke right/smoke right
 index:9
-bounds:2322,2,51,46
+bounds:568,117,51,46
 offsets:76,70,167,167
 rotate:90
-vfx/smoke right/smoke right
-index:1
-bounds:2469,49,81,27
-offsets:19,76,167,167
-vfx/smoke right/smoke right
-index:11
-bounds:2370,7,46,36
-offsets:82,69,167,167
-rotate:90
-vfx/smoke right/smoke right
-index:0
-bounds:229,77,56,15
-offsets:16,80,167,167
-rotate:90
-vfx/smoke right/smoke right
-index:10
-bounds:2552,28,48,43
-offsets:80,70,167,167
-rotate:90
-vfx/smoke right/smoke right
-index:12
-bounds:1901,2,16,28
-offsets:112,69,167,167
 weapon/pistol
-bounds:2598,2,113,76
+bounds:139,106,113,76
 rotate:90
 weapon/rifle
-bounds:2,52,225,81
+bounds:337,727,225,81
 weapon/sword
-bounds:2,200,62,392
+bounds:145,614,62,392
 offsets:4,0,68,397
-rotate:90
 weapon/uzi
-bounds:2322,144,155,118
+bounds:21,708,155,118
+rotate:90

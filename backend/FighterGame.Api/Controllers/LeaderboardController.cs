@@ -97,10 +97,10 @@ public class LeaderboardController : ControllerBase
             return BadRequest("Player name must be 20 characters or less");
         }
         
-        // Calculate score
-        var levelPoints = request.Level * 100;
-        var bonusPoints = (int)Math.Round(100 - Math.Clamp(request.EnemyHealthPercent, 0, 100));
-        var totalScore = levelPoints + bonusPoints;
+        // Calculate score: Level * 1000 + Damage / 10
+        var levelPoints = request.Level * 1000;
+        var damagePoints = (int)Math.Floor(request.DamageDealt / 10.0);
+        var totalScore = levelPoints + damagePoints;
         
         var entry = new LeaderboardEntry
         {
@@ -108,7 +108,7 @@ public class LeaderboardController : ControllerBase
             PlayerName = request.PlayerName.Trim(),
             Score = totalScore,
             Level = request.Level,
-            BonusPoints = bonusPoints,
+            BonusPoints = damagePoints,
             Timestamp = DateTime.UtcNow
         };
         
@@ -149,7 +149,7 @@ public record SubmitScoreRequest
 {
     public required string PlayerName { get; init; }
     public int Level { get; init; }
-    public double EnemyHealthPercent { get; init; }
+    public int DamageDealt { get; init; }
 }
 
 public record SubmitScoreResponse

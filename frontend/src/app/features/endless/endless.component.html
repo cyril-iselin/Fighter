@@ -1,0 +1,106 @@
+<div class="relative w-full h-screen bg-dark-bg overflow-hidden">
+  
+  <!-- Canvas Container (always present for Spine rendering) -->
+  <div #canvasContainer class="absolute inset-0" [class.invisible]="phase() !== 'fight'"></div>
+  
+  <!-- Level Intro Phase -->
+  @if (phase() === 'intro') {
+    <app-level-intro
+      [level]="currentLevelConfig().level"
+      [title]="currentLevelConfig().title"
+      [description]="currentLevelConfig().description"
+      (start)="onIntroStart()">
+    </app-level-intro>
+  }
+  
+  <!-- Fight Phase HUD -->
+  @if (phase() === 'fight') {
+    <!-- HUD Overlay -->
+    <div class="absolute inset-0 z-20 pointer-events-none">
+      
+      <!-- Top Center: Level Badge only -->
+      <div class="absolute top-4 left-1/2 -translate-x-1/2 pointer-events-auto">
+        <!-- Level Badge -->
+        <div class="px-4 py-2 bg-black/60 rounded-lg border border-white/20">
+          <span class="text-white/50 text-sm">Level</span>
+          <span class="text-white font-game text-xl ml-2">{{ runState().currentLevel }}</span>
+        </div>
+      </div>
+      
+      <!-- Health Bars -->
+      <div class="absolute top-4 left-4 right-4 flex justify-between items-start pointer-events-auto">
+        <!-- Player Health (Left) -->
+        <div class="w-[40%]">
+          <app-player-healthbar
+            [health]="fighter0().health"
+            [maxHealth]="fighter0().maxHealth"
+            [specialMeter]="fighter0().specialMeter"
+            [maxSpecial]="fighter0().maxSpecialMeter"
+            [state]="fighter0().state"
+            [parryWindowActive]="fighter0().isParryWindowActive"
+            [characterName]="'Du'"
+            [loadoutType]="runState().loadout">
+          </app-player-healthbar>
+        </div>
+        
+        <!-- Boss Health (Right) -->
+        <div class="w-[40%]">
+          <app-ai-healthbar
+            [health]="fighter1().health"
+            [maxHealth]="fighter1().maxHealth"
+            [stunMeter]="fighter1().pressureMeter"
+            [maxStun]="fighter1().maxPressureMeter"
+            [state]="fighter1().state"
+            [superArmorActive]="fighter1().superArmorActive"
+            [characterName]="currentLevelConfig().title"
+            [loadoutType]="'bare'">
+          </app-ai-healthbar>
+        </div>
+      </div>
+      
+      <!-- Bottom Center: Buff Icons -->
+      <div class="absolute bottom-16 left-1/2 -translate-x-1/2 pointer-events-auto">
+        <app-buff-hud [activeBuffs]="runState().activeBuffs"></app-buff-hud>
+      </div>
+      
+      <!-- Bottom Left: Quick stats -->
+      <div class="absolute bottom-4 left-4 text-white/50 text-sm pointer-events-auto">
+        <div>Kills: {{ runState().totalKills }}</div>
+        <div>Schaden: {{ runState().totalDamageDealt }}</div>
+      </div>
+      
+      <!-- ESC hint -->
+      <div class="absolute bottom-4 right-4 text-white/30 text-sm">
+        ESC = Zurück zum Menü
+      </div>
+    </div>
+  }
+  
+  <!-- Buff Selection Phase -->
+  @if (phase() === 'buff-select') {
+    <app-buff-selection
+      [buffs]="buffChoices()"
+      [currentBuffs]="runState().activeBuffs"
+      (buffSelected)="onBuffSelected($event)">
+    </app-buff-selection>
+  }
+  
+  <!-- Game Over Phase -->
+  @if (phase() === 'game-over') {
+    <app-game-over
+      [level]="gameOverStats().level"
+      [kills]="gameOverStats().kills"
+      [damage]="gameOverStats().damage"
+      [activeBuffs]="runState().activeBuffs"
+      (onRestart)="restartRun()"
+      (onMenu)="exitToMenu()">
+    </app-game-over>
+  }
+  
+  <!-- Loading Overlay -->
+  @if (spineStatus() === 'loading' && phase() === 'fight') {
+    <div class="absolute inset-0 z-50 bg-black flex items-center justify-center">
+      <div class="text-white text-xl animate-pulse">Lade...</div>
+    </div>
+  }
+</div>

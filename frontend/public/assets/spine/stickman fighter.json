@@ -1,7 +1,7 @@
 {
 "skeleton": {
-	"hash": "3xnZv+IpB7Q",
-	"spine": "4.1.24",
+	"hash": "wY/FJYmCx9I",
+	"spine": "4.2.43",
 	"x": -434.83,
 	"y": -0.07,
 	"width": 903.63,
@@ -79,9 +79,17 @@
 		"color": "3fbdffc7"
 	},
 	{ "name": "leg_R2", "parent": "leg_R", "length": 191.84, "rotation": -0.61, "x": 223.51, "color": "40bdffc8" },
-	{ "name": "IKLEG L", "parent": "root", "x": 84.38, "y": 39.36, "color": "ff3f00ff" },
-	{ "name": "IKLEG R", "parent": "root", "x": -35.41, "y": 37.44, "color": "ff3f00ff" },
-	{ "name": "eyes-A", "parent": "head", "rotation": -89.44, "x": 100.44, "y": -78.43, "color": "ffd700ff" },
+	{ "name": "IKLEG L", "parent": "root", "x": 84.38, "y": 39.36, "color": "ff3f00ff", "icon": "ik" },
+	{ "name": "IKLEG R", "parent": "root", "x": -35.41, "y": 37.44, "color": "ff3f00ff", "icon": "ik" },
+	{
+		"name": "eyes-A",
+		"parent": "head",
+		"rotation": -89.44,
+		"x": 100.44,
+		"y": -78.43,
+		"color": "ffd700ff",
+		"icon": "eye"
+	},
 	{ "name": "body2", "parent": "rubber bones", "length": 35.48, "x": 35.48, "color": "00ff0eff" },
 	{ "name": "body3", "parent": "body2", "length": 35.48, "x": 35.48, "color": "00ff0eff" },
 	{ "name": "body4", "parent": "body3", "length": 35.48, "x": 35.48, "color": "00ff0eff" },
@@ -109,7 +117,7 @@
 		"y": 30.81,
 		"color": "ffd700ff"
 	},
-	{ "name": "stickman/shadow", "parent": "root", "color": "ffc300ff" },
+	{ "name": "stickman/shadow", "parent": "root", "color": "ffc300ff", "icon": "arrowsB" },
 	{
 		"name": "vfx",
 		"parent": "root",
@@ -117,13 +125,22 @@
 		"x": 471.31,
 		"y": 225.38,
 		"scaleX": -1,
-		"color": "ffb500ff"
+		"color": "ffb500ff",
+		"icon": "particles"
 	},
-	{ "name": "weapon", "parent": "arm_L2", "x": 157.36, "y": 21.49, "color": "ffab00c7" },
-	{ "name": "weapon_controller", "parent": "root", "rotation": 2.3, "x": 476.71, "y": 918.22, "color": "ffab00c7" }
+	{ "name": "weapon", "parent": "arm_L2", "x": 157.36, "y": 21.49, "color": "ffab00c7", "icon": "arrows" },
+	{
+		"name": "weapon_controller",
+		"parent": "root",
+		"rotation": 2.3,
+		"x": 476.71,
+		"y": 918.22,
+		"color": "ffab00c7",
+		"icon": "arrows"
+	}
 ],
 "slots": [
-	{ "name": "stickman/shadow", "bone": "stickman/shadow", "color": "0000008e" },
+	{ "name": "stickman-shadow", "bone": "stickman/shadow", "color": "0000008e" },
 	{ "name": "arm_stroke_L", "bone": "arm_L", "attachment": "arm_stroke_L" },
 	{ "name": "leg_stroke_L", "bone": "leg_L", "attachment": "leg_stroke_L" },
 	{ "name": "body_stroke", "bone": "rubber bones", "attachment": "body_stroke" },
@@ -138,7 +155,7 @@
 	{ "name": "head", "bone": "head", "attachment": "head" },
 	{ "name": "CONSTRAINT_RUBBER_BODY", "bone": "root", "attachment": "CONSTRAINT_RUBBER_BODY" },
 	{ "name": "head_mask", "bone": "head", "attachment": "head_mask" },
-	{ "name": "stickman/mouth", "bone": "eyes-A", "attachment": "stickman/mouth" },
+	{ "name": "stickman-mouth", "bone": "eyes-A", "attachment": "stickman/mouth" },
 	{ "name": "eyes", "bone": "eyes-A", "attachment": "eyes-A" },
 	{ "name": "arm_R", "bone": "arm_R", "attachment": "arm_R" },
 	{ "name": "slash", "bone": "vfx" },
@@ -307,7 +324,7 @@
 				"vfx/smoke right/smoke right_00011": { "width": 334, "height": 334 },
 				"vfx/smoke right/smoke right_00012": { "width": 334, "height": 334 }
 			},
-			"stickman/mouth": {
+			"stickman-mouth": {
 				"stickman/mouth": {
 					"type": "mesh",
 					"uvs": [ 1, 1, 0.54384, 1, 0, 1, 0, 0, 0.25497, 0, 0.54075, 0, 0.80426, 0, 1, 0 ],
@@ -319,7 +336,7 @@
 					"height": 46
 				}
 			},
-			"stickman/shadow": {
+			"stickman-shadow": {
 				"stickman/shadow": {
 					"type": "mesh",
 					"uvs": [ 1, 1, 0, 1, 0, 0, 1, 0 ],
@@ -2308,6 +2325,9 @@
 		}
 	}
 ],
+"events": {
+	"charge_sword_slash": {}
+},
 "animations": {
 	"1_/block bottom": {
 		"bones": {
@@ -2404,7 +2424,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -2507,7 +2527,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -2612,7 +2632,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -2803,7 +2823,7 @@
 						]
 					}
 				},
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -2967,7 +2987,7 @@
 						]
 					}
 				},
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -3057,7 +3077,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -3176,7 +3196,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -3322,7 +3342,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -3457,7 +3477,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -3595,7 +3615,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -3721,7 +3741,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -3842,7 +3862,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -4004,7 +4024,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -4084,8 +4104,7 @@
 					{ "value": 143.24 },
 					{ "time": 0.0667, "value": -0.92, "curve": "stepped" },
 					{ "time": 0.2, "value": -0.92 },
-					{ "time": 0.2667, "value": 143.24 },
-					{ "time": 0.5333, "value": 143.24 }
+					{ "time": 0.2667, "value": 143.24 }
 				]
 			},
 			"arm_R": {
@@ -4151,7 +4170,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -4272,7 +4291,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -4391,7 +4410,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -4508,7 +4527,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -4583,7 +4602,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -4665,7 +4684,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -4802,7 +4821,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -4975,7 +4994,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -5149,7 +5168,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -5308,7 +5327,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -5470,7 +5489,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -5624,7 +5643,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -5797,7 +5816,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -5989,7 +6008,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -6105,7 +6124,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -6237,7 +6256,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -6398,7 +6417,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -6542,7 +6561,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -6946,7 +6965,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -7070,7 +7089,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -7188,7 +7207,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -7384,7 +7403,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -7540,7 +7559,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -7666,7 +7685,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -7806,7 +7825,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -7935,7 +7954,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -8067,7 +8086,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -8179,7 +8198,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -8296,7 +8315,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -8420,7 +8439,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -8502,7 +8521,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -8591,7 +8610,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -8735,7 +8754,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -8888,7 +8907,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -9105,7 +9124,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -9267,7 +9286,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -9277,7 +9296,10 @@
 					}
 				}
 			}
-		}
+		},
+		"events": [
+			{ "time": 0.1333, "name": "charge_sword_slash", "int": 4 }
+		]
 	},
 	"2_Sword/walk fight pose": {
 		"slots": {
@@ -9423,7 +9445,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -9581,7 +9603,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -9774,7 +9796,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -9911,7 +9933,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -10037,7 +10059,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -10177,7 +10199,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -10306,7 +10328,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -10438,7 +10460,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -10550,7 +10572,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -10667,7 +10689,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -10791,7 +10813,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -10873,7 +10895,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -10962,7 +10984,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -11106,7 +11128,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -11267,7 +11289,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -11434,7 +11456,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -11637,7 +11659,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -11772,7 +11794,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -11926,7 +11948,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -12077,7 +12099,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -12252,7 +12274,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -12445,7 +12467,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -12582,7 +12604,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -12708,7 +12730,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -12848,7 +12870,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -12977,7 +12999,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -13109,7 +13131,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -13221,7 +13243,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -13338,7 +13360,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -13462,7 +13484,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -13544,7 +13566,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -13633,7 +13655,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -13777,7 +13799,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -13938,7 +13960,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -14142,7 +14164,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -14345,7 +14367,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -14457,7 +14479,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -14607,7 +14629,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -14758,7 +14780,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -14980,7 +15002,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -15105,7 +15127,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -15301,7 +15323,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -15438,7 +15460,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -15569,7 +15591,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -15709,7 +15731,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -15838,7 +15860,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -15950,7 +15972,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -16083,7 +16105,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -16208,7 +16230,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -16338,7 +16360,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -16425,7 +16447,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -16515,7 +16537,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -16664,7 +16686,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -16805,7 +16827,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -16992,7 +17014,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -17214,7 +17236,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -17344,7 +17366,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -17491,7 +17513,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -17618,7 +17640,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
@@ -17821,7 +17843,7 @@
 		},
 		"attachments": {
 			"default": {
-				"stickman/mouth": {
+				"stickman-mouth": {
 					"stickman/mouth": {
 						"deform": [
 							{
