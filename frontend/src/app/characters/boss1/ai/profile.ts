@@ -47,8 +47,8 @@ export const BOSS1_AI_PROFILE: CharacterAIProfile = createProfile({
         chaseLockTicks: 5,
         airborneStopRange: 150,
         // Stay at fighting distance after attacking (70% of engageRange)
-        preferredDistance: 450,    // Stay within attack range but not too close
-        retreatDistance: 200,      // Only retreat if very close
+        preferredDistance: 400,    // Stay within attack range but not too close
+        retreatDistance: 150,      // Only retreat if very close
         retreatProbability: 0.3,   // Low retreat chance (boss is aggressive)
         maintainDistance: true,    // Actively maintain spacing
     },
@@ -67,8 +67,8 @@ export const BOSS1_AI_PROFILE: CharacterAIProfile = createProfile({
             name: 'Aufwärmphase',
             hpPercent: 100,
             speed: 1.0,
-            aggression: 0.5,
-            attackWeights: { heavy: 20, light: 80 },
+            aggression: 0.6,
+            attackWeights: { heavy: 30, light: 70 },
             reactionDelay: 7,
             rageBurst: {
                 proximityThreshold: 300,  // Player must be within 300px
@@ -100,13 +100,13 @@ export const BOSS1_AI_PROFILE: CharacterAIProfile = createProfile({
             speed: 2.0,
             aggression: 1.0,
             attackWeights: { heavy: 60, light: 40 },
-            reactionDelay: 3,
+            reactionDelay: 2,
             superArmor: true,
             telegraphOverrides: {
                 boss1_heavy: 150,
             },
             rageBurst: {
-                proximityThreshold: 400,  // Player must be within 400px
+                proximityThreshold: 450,  // Player must be within 450px
                 durationTicks: 180,        // ~3 seconds at 60fps
                 cooldownTicks: 600,       // ~10 seconds between bursts
                 knockbackStrength: 3500,

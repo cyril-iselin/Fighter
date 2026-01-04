@@ -1,38 +1,101 @@
-<div class="controls-info-container">
-  <h3 class="text-xs font-bold text-purple-300 uppercase tracking-wider mb-2">Steuerung</h3>
-  <div class="grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs">
-    <div class="flex items-center gap-1.5">
-      <kbd class="px-1.5 py-0.5 bg-slate-800 border border-purple-500/30 rounded text-purple-300 font-mono text-xs">A</kbd>
-      <kbd class="px-1.5 py-0.5 bg-slate-800 border border-purple-500/30 rounded text-purple-300 font-mono text-xs">D</kbd>
-      <span class="text-white/60">Bewegen</span>
+<div class="controls-container">
+  <h3 class="text-center text-white/50 text-xs font-game tracking-wider mb-3">STEUERUNG</h3>
+  
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+    <!-- Movement -->
+    <div class="flex flex-col items-center gap-1.5">
+      <div class="flex gap-1">
+        <kbd class="key">A</kbd>
+        <kbd class="key">D</kbd>
+      </div>
+      <span class="label">Bewegen</span>
     </div>
-    <div class="flex items-center gap-1.5">
-      <kbd class="px-1.5 py-0.5 bg-slate-800 border border-purple-500/30 rounded text-purple-300 font-mono text-xs">Space</kbd>
-      <span class="text-white/60">Springen</span>
+    
+    <!-- Jump -->
+    <div class="flex flex-col items-center gap-1.5">
+      <kbd class="key">SPACE</kbd>
+      <span class="label">Springen</span>
     </div>
-    <div class="flex items-center gap-1.5">
-      <kbd class="px-1.5 py-0.5 bg-slate-800 border border-purple-500/30 rounded text-purple-300 font-mono text-xs">Shift</kbd>
-      <span class="text-white/60">Rennen</span>
+    
+    <!-- Run -->
+    <div class="flex flex-col items-center gap-1.5">
+      <kbd class="key">SHIFT</kbd>
+      <span class="label">Rennen</span>
     </div>
-    <div class="flex items-center gap-1.5">
-      <kbd class="px-1.5 py-0.5 bg-slate-800 border border-purple-500/30 rounded text-purple-300 font-mono text-xs">F</kbd>
-      <span class="text-white/60">Spezial</span>
+    
+    <!-- Special -->
+    <div class="flex flex-col items-center gap-1.5">
+      <kbd class="key key-special">F</kbd>
+      <span class="label">Special</span>
     </div>
-    <div class="flex items-center gap-1.5">
-      <kbd class="px-1.5 py-0.5 bg-slate-800 border border-purple-500/30 rounded text-purple-300 font-mono text-xs">LMB</kbd>
-      <span class="text-white/60">Leicht</span>
+    
+    <!-- Light Attack -->
+    <div class="flex flex-col items-center gap-1.5">
+      <div class="flex items-center gap-1">
+        <span class="text-green-400 text-sm">🖱️</span>
+        <span class="text-white/50 text-xs">Klick</span>
+      </div>
+      <span class="label">Leichter Angriff</span>
     </div>
-    <div class="flex items-center gap-1.5">
-      <kbd class="px-1.5 py-0.5 bg-slate-800 border border-purple-500/30 rounded text-purple-300 font-mono text-xs">Hold</kbd>
-      <span class="text-white/60">Schwer</span>
+    
+    <!-- Heavy Attack -->
+    <div class="flex flex-col items-center gap-1.5">
+      <div class="flex items-center gap-1">
+        <span class="text-orange-400 text-sm">🖱️</span>
+        <span class="text-white/50 text-xs">Halten</span>
+      </div>
+      <span class="label">Schwerer Angriff</span>
     </div>
-    <div class="flex items-center gap-1.5">
-      <kbd class="px-1.5 py-0.5 bg-slate-800 border border-purple-500/30 rounded text-purple-300 font-mono text-xs">RMB</kbd>
-      <span class="text-white/60">Blocken</span>
+    
+    <!-- Block -->
+    <div class="flex flex-col items-center gap-1.5">
+      <div class="flex items-center gap-1">
+        <span class="text-cyan-400 text-sm">🖱️</span>
+        <span class="text-white/50 text-xs">Rechts</span>
+      </div>
+      <span class="label">Blocken</span>
     </div>
-    <div class="flex items-center gap-1.5 col-span-2">
-      <kbd class="px-1.5 py-0.5 bg-slate-800 border border-purple-500/30 rounded text-purple-300 font-mono text-xs">RMB+↕</kbd>
-      <span class="text-white/60">Block Zone</span>
+    
+    <!-- Parry -->
+    <div class="flex flex-col items-center gap-1.5">
+      <div class="key key-parry">
+        <span class="text-xs">⚡ TIMING</span>
+      </div>
+      <span class="label">Parieren</span>
     </div>
+  </div>
+  
+  <!-- Special Moves -->
+  <div class="mt-3 pt-3 border-t border-white/10">
+    <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs">
+      <!-- Running Attack -->
+      <div class="flex items-center gap-1.5">
+        <span class="text-purple-400">Beim Laufen:</span>
+        <span class="text-green-400">🖱️</span>
+        <span class="text-white/50">Klick</span>
+        <span class="text-white/30">→</span>
+        <span class="text-white/60">Reverse Kick</span>
+      </div>
+      <!-- Air Attacks -->
+      <div class="flex items-center gap-1.5">
+        <span class="text-yellow-400">In der Luft:</span>
+        <span class="text-green-400">🖱️</span>
+        <span class="text-white/50">Klick</span>
+        <span class="text-white/30">→</span>
+        <span class="text-white/60">Flying Attack</span>
+        <span class="text-white/20 mx-1">·</span>
+        <span class="text-orange-400">🖱️</span>
+        <span class="text-white/50">Halten</span>
+        <span class="text-white/30">→</span>
+        <span class="text-white/60">Salto</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Block Zone Hint -->
+  <div class="mt-3 pt-3 border-t border-white/10 text-center">
+    <p class="text-white/30 text-xs">
+      <span class="text-cyan-400">Block:</span> Maus nach oben = Kopf · Maus neutral = Körper
+    </p>
   </div>
 </div>

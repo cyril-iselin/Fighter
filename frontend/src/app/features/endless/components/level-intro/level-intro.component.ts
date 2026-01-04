@@ -1,8 +1,10 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { ControlsInfoComponent } from '../../../../shared/components/controls-info/controls-info.component';
 
 @Component({
   selector: 'app-level-intro',
   standalone: true,
+  imports: [ControlsInfoComponent],
   template: `
     <div class="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center overflow-hidden">
       <!-- Matrix rain background -->
@@ -52,6 +54,27 @@ import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, HostListener
                    animate-fade-in-up shadow-[0_0_30px_rgba(255,255,255,0.3)]">
             KÄMPFEN
           </button>
+          
+          <!-- Controls Toggle -->
+          <div class="mt-6 animate-fade-in-up" style="animation-delay: 0.2s;">
+            <button 
+              (click)="toggleControls($event)"
+              class="text-white/50 hover:text-white/80 transition-colors text-sm flex items-center gap-2 mx-auto">
+              <span class="transition-transform duration-200" [class.rotate-90]="showControls">▶</span>
+              Steuerung anzeigen
+            </button>
+            
+            <!-- Collapsible Controls -->
+            <div 
+              class="overflow-hidden transition-all duration-300 ease-out"
+              [style.max-height]="showControls ? '300px' : '0px'"
+              [style.opacity]="showControls ? '1' : '0'"
+              [style.margin-top]="showControls ? '1rem' : '0'">
+              <div class="max-w-xl mx-auto">
+                <app-controls-info [compact]="true"></app-controls-info>
+              </div>
+            </div>
+          </div>
         }
       </div>
       
@@ -135,6 +158,7 @@ export class LevelIntroComponent implements OnInit, OnDestroy {
   showTitle = false;
   showDescription = false;
   showButton = false;
+  showControls = false;
   displayedTitle = '';
   titleComplete = false;
   
@@ -218,5 +242,10 @@ export class LevelIntroComponent implements OnInit, OnDestroy {
   
   onStart(): void {
     this.start.emit();
+  }
+  
+  toggleControls(event: Event): void {
+    event.stopPropagation();
+    this.showControls = !this.showControls;
   }
 }
