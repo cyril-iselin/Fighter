@@ -5,8 +5,7 @@
 // No complex cancel system - let animations drive timing
 // ============================================================================
 
-import type { Fighter, GameEvent, HitZone } from '../types';
-import { PARRY_WINDOW_TICKS } from '../config';
+import type { Fighter, GameEvent } from '../types';
 import { getAttackData } from '../../adapters/attack-resolver';import type { AttackId } from '../attack-types';import { forceTransition } from '../state-machine';
 
 // ============================================================================

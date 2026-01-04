@@ -81,7 +81,8 @@
     <app-buff-selection
       [buffs]="buffChoices()"
       [currentBuffs]="runState().activeBuffs"
-      (buffSelected)="onBuffSelected($event)">
+      [maxSelections]="2"
+      (buffsSelected)="onBuffsSelected($event)">
     </app-buff-selection>
   }
   

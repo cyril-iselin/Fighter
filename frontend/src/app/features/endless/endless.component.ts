@@ -234,43 +234,44 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
     await this.startFight();
   }
 
-  onBuffSelected(buff: BuffDefinition): void {
-    
+  onBuffsSelected(buffs: BuffDefinition[]): void {
     const state = this.runState();
-    const existingIndex = state.activeBuffs.findIndex(b => b.id === buff.id);
-    
-    let newBuffs: ActiveBuff[];
-    if (existingIndex >= 0 && buff.stackable) {
-      // Stack existing buff
-      newBuffs = [...state.activeBuffs];
-      newBuffs[existingIndex] = {
-        ...newBuffs[existingIndex],
-        stacks: newBuffs[existingIndex].stacks + 1,
-      };
-    } else if (existingIndex < 0) {
-      // Add new buff
-      newBuffs = [...state.activeBuffs, { id: buff.id, stacks: 1 }];
-    } else {
-      // Non-stackable already owned, shouldn't happen
-      newBuffs = state.activeBuffs;
-    }
-    
-    // Check for sword mastery
+    let newBuffs = [...state.activeBuffs];
     let newLoadout = state.loadout;
-    if (buff.id === 'sword_mastery') {
-      newLoadout = 'sword';
+    let newHealth = state.playerHealth;
+    
+    // Process each selected buff
+    for (const buff of buffs) {
+      const existingIndex = newBuffs.findIndex(b => b.id === buff.id);
+      
+      if (existingIndex >= 0 && buff.stackable) {
+        // Stack existing buff
+        newBuffs[existingIndex] = {
+          ...newBuffs[existingIndex],
+          stacks: newBuffs[existingIndex].stacks + 1,
+        };
+      } else if (existingIndex < 0) {
+        // Add new buff
+        newBuffs = [...newBuffs, { id: buff.id, stacks: 1 }];
+      }
+      
+      // Check for sword mastery
+      if (buff.id === 'sword_mastery') {
+        newLoadout = 'sword';
+      }
     }
     
     // Apply max health bonus immediately
     const newModifiers = calculateModifiers(newBuffs, newLoadout);
     const newMaxHealth = ENDLESS_SCALING.playerStartMaxHp + newModifiers.maxHealthBonus;
     
-    // Vitality buffs also heal for their value
-    let newHealth = state.playerHealth;
-    if (buff.id === 'vitality') {
-      newHealth = Math.min(newHealth + 50, newMaxHealth);
-    } else if (buff.id === 'greater_vitality') {
-      newHealth = Math.min(newHealth + 75, newMaxHealth);
+    // Process vitality buffs healing
+    for (const buff of buffs) {
+      if (buff.id === 'vitality') {
+        newHealth = Math.min(newHealth + 50, newMaxHealth);
+      } else if (buff.id === 'greater_vitality') {
+        newHealth = Math.min(newHealth + 75, newMaxHealth);
+      }
     }
     
     this.runState.set({
@@ -533,7 +534,7 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
       })
       .map(b => b.id);
     
-    this.buffChoices.set(selectRandomBuffs(3, excludeIds));
+    this.buffChoices.set(selectRandomBuffs(5, excludeIds));
     
     // Preload next background while showing buff selection
     this.preloadedBackground = null; // Clear old one

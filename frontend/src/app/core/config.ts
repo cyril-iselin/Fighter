@@ -59,7 +59,7 @@ export const SPECIAL_METER_MAX = 100;
 export const PRESSURE_METER_MAX = 100;  // AI meter: increases when taking hits
 
 // Combat Constants (simplified)
-export const PARRY_WINDOW_TICKS = 18;  // 300ms @ 60Hz (parry window)
+export const PARRY_WINDOW_TICKS = 10;  // 220ms @ 60Hz (parry window)
 export const HURT_TICKS = 30;          // 500ms @ 60Hz
 export const PRESSURE_STUN_TICKS = 120;  // 2000ms @ 60Hz (pressure stun duration)
 

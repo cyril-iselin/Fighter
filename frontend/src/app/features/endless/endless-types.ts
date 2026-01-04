@@ -15,7 +15,6 @@ export type BuffEffectType =
   | 'vitality'          // +50 max HP
   | 'special_charge'    // +25% special meter charge
   | 'pressure_master'   // +25% pressure meter build
-  | 'parry_window'      // +10% parry window
   | 'greater_vitality'  // +75 max HP
   | 'swift'             // +10% movement speed
   | 'vampirism'         // +4 HP per hit
@@ -159,9 +158,6 @@ export function calculateModifiers(buffs: ActiveBuff[], baseLoadout: Loadout = '
         break;
       case 'pressure_master':
         modifiers.pressureMultiplier += 0.25 * stacks;
-        break;
-      case 'parry_window':
-        modifiers.parryWindowMultiplier += 0.10 * stacks;
         break;
       case 'greater_vitality':
         modifiers.maxHealthBonus += 75 * stacks;
