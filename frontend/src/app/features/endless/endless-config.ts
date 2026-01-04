@@ -117,7 +117,7 @@ export const BUFF_POOL: BuffDefinition[] = [
   },
 
   // ---------------------------------------------------------------------------
-  // LEGENDARY BUFFS (5% drop chance)
+  // LEGENDARY BUFFS (10% drop chance)
   // ---------------------------------------------------------------------------
   {
     id: 'sword_mastery',
@@ -164,7 +164,7 @@ export const BUFF_POOL: BuffDefinition[] = [
 export const RARITY_WEIGHTS: Record<BuffRarity, number> = {
   normal: 70,
   rare: 25,
-  legendary: 5,
+  legendary: 10,
 };
 
 // =============================================================================
@@ -226,10 +226,10 @@ export const ENDLESS_SCALING = {
   hpPerLevel: 100,
   
   /** Base damage multiplier for Legend levels */
-  legendBaseDamage: 1.2,
+  legendBaseDamage: 1.3,
   
   /** Damage increase per Legend level (0.1 = 10%) */
-  damagePerLevel: 0.1,
+  damagePerLevel: 0.3,
   
   /** HP restored after each victory */
   hpRestoreOnWin: 100,
