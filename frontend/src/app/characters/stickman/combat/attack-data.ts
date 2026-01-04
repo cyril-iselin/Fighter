@@ -39,6 +39,7 @@ export const STICKMAN_ATTACK_DATA: Record<StickmanAttackId, AttackConfig> = {
     pressureCharge: 8,
     engageRange: 300,    // Was 150 - AI starts further back
     cooldownTicks: 10,
+    superArmor: true,
   },
   kick_high: {
     id: 'kick_high',
