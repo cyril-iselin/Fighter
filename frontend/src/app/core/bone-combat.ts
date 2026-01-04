@@ -414,17 +414,17 @@ export function checkBoneHit(
   // AI (Fighter 1) builds pressure meter when getting hit (but not during pressure stun)
   if (defender.id === 1 && mainAttackConfig.pressureCharge && defender.pressureStunTicks === 0) {
     defender.pressureMeter = Math.min(PRESSURE_METER_MAX, defender.pressureMeter + mainAttackConfig.pressureCharge);
-
-    // Check for pressure stun (only on hit, not on block/parry)
-    if (!wasBlocked && !wasParried && defender.pressureMeter >= PRESSURE_METER_MAX) {
-      // Trigger pressure stun: force hurt state and set stun timer (unless super armor)
-      if (!hasSuperArmor(defender, currentTick)) {
-        forceTransition(defender, 'hurt');
-        defender.stateTicks = 0;
-        defender.pressureStunTicks = PRESSURE_STUN_TICKS;
-        // Note: pressureMeter reset happens after stun ends in step.ts
-      }
-    }
+  }
+  
+  // Check for pressure stun (triggers when meter hits 100%)
+  // IMPORTANT: Pressure stun IGNORES super armor - it's meant to break through aggressive bosses!
+  if (defender.id === 1 && defender.pressureStunTicks === 0 && defender.pressureMeter >= PRESSURE_METER_MAX) {
+    // Trigger pressure stun: force hurt state and set stun timer
+    forceTransition(defender, 'hurt');
+    defender.stateTicks = 0;
+    defender.pressureStunTicks = PRESSURE_STUN_TICKS;
+    defender.activeAttack = null;  // Cancel any ongoing attack
+    // Note: pressureMeter reset happens after stun ends in step.ts
   }
 
   // Clamp health to 0 and check for death

@@ -89,7 +89,7 @@ export const STICKMAN_ATTACK_DATA: Record<StickmanAttackId, AttackConfig> = {
     id: 'thousand_fists',
     loadout: 'bare',
     command: 'special',
-    damage: 12,
+    damage: 15,
     knockback: 0,
     zone: 'center',
     range: 120,
