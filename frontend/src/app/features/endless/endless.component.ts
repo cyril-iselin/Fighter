@@ -460,11 +460,19 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
       
-      // Track damage taken by player
+      // Track damage taken by player - apply boss damage multiplier!
       if (event.type === 'hit' && event.defender === 0) {
+        const levelConfig = this.currentLevelConfig();
+        const bossMultiplier = levelConfig.bossDamageMultiplier;
+        const baseDamage = event.damage;
+        const totalDamage = Math.floor(baseDamage * bossMultiplier);
+        
+        // Update event damage for display
+        (events[i] as any).damage = totalDamage;
+        
         this.runState.update(s => ({
           ...s,
-          playerHealth: Math.max(0, s.playerHealth - event.damage),
+          playerHealth: Math.max(0, s.playerHealth - totalDamage),
         }));
       }
     }

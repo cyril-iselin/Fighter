@@ -229,10 +229,10 @@ export const ENDLESS_SCALING = {
   legendBaseDamage: 1.3,
   
   /** Damage increase per Legend level (0.1 = 10%) */
-  damagePerLevel: 0.3,
+  damagePerLevel: 0.2,
   
   /** HP restored after each victory */
-  hpRestoreOnWin: 100,
+  hpRestoreOnWin: 50,
   
   /** Starting player HP */
   playerStartHp: 500,

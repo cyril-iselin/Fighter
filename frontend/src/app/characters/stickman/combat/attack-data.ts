@@ -132,7 +132,7 @@ export const STICKMAN_ATTACK_DATA: Record<StickmanAttackId, AttackConfig> = {
     cooldownTicks: 20,
     specialCharge: 5,
     pressureCharge: 12,
-    engageRange: 450,    // Was 220 - sword keeps more distance
+    engageRange: 450,
   },
   slash_heavy: {
     id: 'slash_heavy',
@@ -150,7 +150,7 @@ export const STICKMAN_ATTACK_DATA: Record<StickmanAttackId, AttackConfig> = {
     },
     specialCharge: 10,
     pressureCharge: 20,
-    engageRange: 450,    // Was 220
+    engageRange: 450,   
     superArmor: true,
   },
 };

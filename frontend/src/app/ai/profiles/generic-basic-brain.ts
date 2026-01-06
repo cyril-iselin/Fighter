@@ -28,6 +28,9 @@ export class GenericBasicBrain implements IFighterBrain {
 
   // Attack cooldown tracking
   private attackCooldowns = new Map<AttackCommand, number>();
+  private globalAttackCooldownUntil = -1;  // Global cooldown between ANY attacks
+  private lastAttackTick = 0;  // Track when we last attacked (for idle timeout)
+  private approachingToAttack = false;  // Flag to ignore maintainDistance during approach
   
   // Cached engage range per loadout (computed from attack-data)
   private engageRangeCache = new Map<Loadout, number>();
@@ -415,6 +418,11 @@ export class GenericBasicBrain implements IFighterBrain {
     const { attackPolicy } = this.profile;
     const { opponent, distance } = obs;
 
+    // Check global attack cooldown first (prevents attack spam by switching attacks)
+    if (tick < this.globalAttackCooldownUntil) {
+      return null;
+    }
+
     // Check aggression roll (use phase-modified aggression)
     const effectiveAggression = this.getEffectiveAggression();
     if (!this.rng.chance(effectiveAggression)) {
@@ -486,10 +494,16 @@ export class GenericBasicBrain implements IFighterBrain {
     for (const attack of attacks) {
       roll -= attack.weight;
       if (roll <= 0) {
-        // Apply cooldown if specified
+        // Apply per-attack cooldown if specified
         if (attack.cooldownTicks) {
           this.attackCooldowns.set(attack.command, tick + attack.cooldownTicks);
         }
+        // Apply global attack cooldown (30 ticks = ~0.5 sec between any attack decision)
+        this.globalAttackCooldownUntil = tick + 30;
+        // Track when we last attacked
+        this.lastAttackTick = tick;
+        // Reset approach flag - we attacked!
+        this.approachingToAttack = false;
         return attack.command;
       }
     }
@@ -528,14 +542,27 @@ export class GenericBasicBrain implements IFighterBrain {
       const preferredDist = this.getEffectivePreferredDistance(self.loadout);
       const deadzone = rangePolicy.chaseDeadzone;
       
+      // If we're approaching to attack, ignore maintainDistance until we attack
+      if (this.approachingToAttack) {
+        this.handleChase(obs, tick, intent);
+        return;
+      }
+      
       // Too close - back off toward preferred distance
       if (distance < preferredDist - deadzone) {
         this.handleRetreat(obs, tick, intent);
         return;
       }
       
-      // At preferred distance - stop
+      // At preferred distance - check if we've been idle too long
       if (distance >= preferredDist - deadzone && distance <= preferredDist + deadzone) {
+        // If we haven't attacked in 180 ticks (~3 sec), start approaching to attack
+        const idleTimeout = 180;
+        if (tick - this.lastAttackTick > idleTimeout) {
+          this.approachingToAttack = true;
+          this.handleChase(obs, tick, intent);
+          return;
+        }
         intent.move = 'none';
         return;
       }
@@ -638,6 +665,9 @@ export class GenericBasicBrain implements IFighterBrain {
     this.inEngageRange = false;
     this.engageLockUntil = -1;
     this.attackCooldowns.clear();
+    this.globalAttackCooldownUntil = -1;
+    this.lastAttackTick = 0;
+    this.approachingToAttack = false;
     this.engageRangeCache.clear();
     this.rng.reset();
   }
