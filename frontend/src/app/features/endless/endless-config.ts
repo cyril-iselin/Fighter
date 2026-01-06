@@ -3,6 +3,96 @@
 // ============================================================================
 
 import { BuffDefinition, BuffRarity, EndlessLevelConfig } from './endless-types';
+import type { BossEventDefinition } from './events';
+
+// =============================================================================
+// BOSS EVENT DEFINITIONS
+// =============================================================================
+
+/**
+ * Default event for early levels - ground circle
+ */
+export const EVENT_GROUND_CIRCLE_EASY: BossEventDefinition = {
+  id: 'ground-circle-easy',
+  type: 'ground-circle',
+  hpTrigger: 60,
+  durationTicks: 540, // 9 seconds total for all 3 catches
+  radius: 150,
+  requiredSuccesses: 3,
+  announcement: '🎯 STEH IM KREIS! 🎯',
+  successReward: {
+    bossStunTicks: 180,  // 3 seconds stun
+    specialMeter: 100,   // Full special bar
+  },
+  failPenalty: {
+    playerDamage: 50,
+  },
+};
+
+/**
+ * Quick dash event - catch floating orb
+ */
+export const EVENT_QUICK_DASH_EASY: BossEventDefinition = {
+  id: 'quick-dash-easy',
+  type: 'quick-dash',
+  hpTrigger: 90,
+  durationTicks: 450, // 7.5 seconds total for all 3 catches
+  targetRadius: 200,
+  spawnHeight: -350, // Negative Y = in the air (Y goes negative when jumping)
+  requiredSuccesses: 3,
+  announcement: '⚡ SPRING IN DEN ORB! ⚡',
+  successReward: {
+    bossStunTicks: 180,  // 3 seconds stun
+    specialMeter: 50,
+    healPlayer: 30,
+  },
+  failPenalty: {
+    playerDamage: 40,
+  },
+};
+
+/**
+ * Hard mode ground circle - smaller radius, faster
+ */
+export const EVENT_GROUND_CIRCLE_HARD: BossEventDefinition = {
+  id: 'ground-circle-hard',
+  type: 'ground-circle',
+  hpTrigger: 25,
+  durationTicks: 450, // 4 seconds total for all 3 catches
+  radius: 120,
+  requiredSuccesses: 3,
+  announcement: '🎯 SCHNELL IN DEN KREIS! 🎯',
+  successReward: {
+    bossStunTicks: 240,  // 4 seconds stun
+    specialMeter: 100,
+    bossDamage: 50,
+  },
+  failPenalty: {
+    playerDamage: 75,
+  },
+};
+
+/**
+ * Legend-level quick dash - aerial orb, harder to reach
+ */
+export const EVENT_QUICK_DASH_HARD: BossEventDefinition = {
+  id: 'quick-dash-hard',
+  type: 'quick-dash',
+  hpTrigger: 50,
+  durationTicks: 450, // 4.5 seconds total for all 3 catches
+  targetRadius: 200,
+  spawnHeight: -420, // Higher in air (more negative = higher)
+  requiredSuccesses: 3,
+  announcement: '⚡ SPRING IN DEN ORB! ⚡',
+  successReward: {
+    bossStunTicks: 180,
+    specialMeter: 100,
+  },
+  failPenalty: {
+    playerDamage: 60,
+    bossSpeedBuff: { multiplier: 1.3, durationTicks: 300 },
+  },
+};
 
 // =============================================================================
 // BUFF DEFINITIONS
@@ -179,6 +269,7 @@ export const PREDEFINED_LEVELS: EndlessLevelConfig[] = [
     aiId: 'stickman-normal',
     bossHealth: 300,
     bossDamageMultiplier: 1.0,
+    events: [EVENT_QUICK_DASH_EASY, EVENT_GROUND_CIRCLE_EASY],
   },
   {
     level: 2,
@@ -187,6 +278,7 @@ export const PREDEFINED_LEVELS: EndlessLevelConfig[] = [
     aiId: 'boss1-aggressive',
     bossHealth: 350,
     bossDamageMultiplier: 1.0,
+    // No events yet - still learning
   },
   {
     level: 3,
@@ -195,6 +287,7 @@ export const PREDEFINED_LEVELS: EndlessLevelConfig[] = [
     aiId: 'boss2-defensive',
     bossHealth: 400,
     bossDamageMultiplier: 1.0,
+    events: [EVENT_GROUND_CIRCLE_EASY], // First event introduction
   },
   {
     level: 4,
@@ -203,6 +296,7 @@ export const PREDEFINED_LEVELS: EndlessLevelConfig[] = [
     aiId: 'boss3-tank',
     bossHealth: 450,
     bossDamageMultiplier: 1.1,
+    events: [EVENT_QUICK_DASH_EASY, EVENT_GROUND_CIRCLE_EASY],
   },
   {
     level: 5,
@@ -211,6 +305,7 @@ export const PREDEFINED_LEVELS: EndlessLevelConfig[] = [
     aiId: 'stickman-normal',
     bossHealth: 550,
     bossDamageMultiplier: 1.2,
+    events: [EVENT_QUICK_DASH_EASY, EVENT_GROUND_CIRCLE_EASY],
   },
 ];
 
@@ -269,6 +364,20 @@ export function getLevelConfig(level: number): EndlessLevelConfig {
   const legendLevel = level - PREDEFINED_LEVELS.length;
   const aiIndex = (legendLevel - 1) % LEGEND_AI_POOL.length;
   
+  // Legend levels get random event (0 or 1)
+  const allEvents: BossEventDefinition[] = [
+    EVENT_QUICK_DASH_HARD,
+    EVENT_GROUND_CIRCLE_HARD,
+  ];
+  
+  // 70% chance for an event, 30% no event
+  let events: BossEventDefinition[] = [];
+  if (Math.random() < 0.7) {
+    // Pick one random event
+    const randomIndex = Math.floor(Math.random() * allEvents.length);
+    events = [allEvents[randomIndex]];
+  }
+  
   return {
     level,
     title: `Legend ${legendLevel}`,
@@ -276,6 +385,7 @@ export function getLevelConfig(level: number): EndlessLevelConfig {
     aiId: LEGEND_AI_POOL[aiIndex],
     bossHealth: ENDLESS_SCALING.legendBaseHp + (legendLevel * ENDLESS_SCALING.hpPerLevel),
     bossDamageMultiplier: ENDLESS_SCALING.legendBaseDamage + (legendLevel * ENDLESS_SCALING.damagePerLevel),
+    events,
   };
 }
 

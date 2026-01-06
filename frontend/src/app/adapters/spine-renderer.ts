@@ -5,9 +5,10 @@
 // ============================================================================
 
 import * as spine from '@esotericsoftware/spine-webgl';
-import type { MatchState, GameEvent, FighterState, AttackId } from '../core/types';
-import type { BoneSamples, BonePoint, BoneLine } from '../core/bone-samples';
+import type { MatchState, GameEvent, AttackId } from '../core/types';
+import type { BoneSamples, BoneLine } from '../core/bone-samples';
 import { quantize, createEmptyBoneSamples } from '../core/bone-samples';
+import { PHYSICS } from '../core/config';
 import { CustomAtlasAttachmentLoader } from './spine-attachment-loader';
 import { SpineStageRenderer, TRAINING_STAGE, AVAILABLE_BACKGROUNDS, type BackgroundId, type ParallaxConfig } from './spine-stage';
 import { resolveAnimation, getRunStopAnimation } from './animation-resolver';
@@ -15,7 +16,7 @@ import { BoneDebugRenderer } from './bone-debug';
 import { CombatTextRenderer } from './combat-text';
 import { BlockFreezeManager } from './spine/block-freeze';
 import { TelegraphFreezeManager } from './spine/telegraph-freeze';
-import { getBoneTip, getBoneOrigin, ATTACK_BONES, HURTBOX_BONES, DESIGN_HEIGHT as SPINE_DESIGN_HEIGHT, gameToSpinePosition } from './spine-bone-transform';
+import { getBoneTip, getBoneOrigin, ATTACK_BONES, HURTBOX_BONES, gameToSpinePosition } from './spine-bone-transform';
 import type { SpineSkeleton } from './spine-adapter';
 import { getCharacter } from '../characters/registry';
 
@@ -180,6 +181,7 @@ export class SpineRenderer {
 
     private scale: number = 1;
     private cameraX: number = 960; // Center
+    private cameraLeft: number = 0; // Left edge of camera viewport
 
     private showDebugRanges: boolean = false;
     private currentMatchState: MatchState | null = null;
@@ -190,6 +192,9 @@ export class SpineRenderer {
     
     // Screen effects
     private screenFlash: { color: string; opacity: number; duration: number; age: number } | null = null;
+    
+    // Fighter visibility control (for boss events)
+    private fighterVisible: [boolean, boolean] = [true, true];
 
     constructor(canvas: HTMLCanvasElement, stageConfig: ParallaxConfig = TRAINING_STAGE) {
         this.canvas = canvas;
@@ -449,17 +454,18 @@ export class SpineRenderer {
         // Like classic beat'em ups, opponent can be off-screen
         const player = state.fighters[0];
         
-        // CRITICAL: Camera must respect arena bounds (doubled for larger arena)
-        const ARENA_MIN = -2000;  // PHYSICS.arenaMinX (doubled)
-        const ARENA_MAX = 7840;   // PHYSICS.arenaMaxX (doubled)
+        // CRITICAL: Camera must respect arena bounds
         const VIEWPORT_HALF = DESIGN_WIDTH / 2;
         
-        const cameraMinX = ARENA_MIN + VIEWPORT_HALF;
-        const cameraMaxX = ARENA_MAX - VIEWPORT_HALF;
+        const cameraMinX = PHYSICS.arenaMinX + VIEWPORT_HALF;
+        const cameraMaxX = PHYSICS.arenaMaxX - VIEWPORT_HALF;
         
         // Ideal: center on player; clamped to arena bounds
         const idealCameraX = player.x;
         this.cameraX = Math.max(cameraMinX, Math.min(cameraMaxX, idealCameraX));
+        
+        // Calculate left edge of camera viewport (for overlay coordinate conversion)
+        this.cameraLeft = this.cameraX - DESIGN_WIDTH / 2;
         
         // Update stage camera
         this.stageRenderer.setCameraX(this.cameraX);
@@ -734,6 +740,11 @@ export class SpineRenderer {
             .sort((a, b) => a.skeleton.x - b.skeleton.x);
 
         for (const fighter of sortedFighters) {
+            // Check visibility - skip rendering if fighter is hidden (boss events)
+            const fighterIndex = this.fighters.indexOf(fighter);
+            if (!this.fighterVisible[fighterIndex]) {
+                continue;
+            }
             this.skeletonRenderer.draw(this.batcher, fighter.skeleton);
         }
 
@@ -846,6 +857,77 @@ export class SpineRenderer {
     setShowCalibration(show: boolean): void {
         if (this.debugRenderer) {
             this.debugRenderer.setConfig({ showCalibration: show });
+        }
+    }
+
+    /**
+     * Set fighter visibility (used for boss events)
+     * When hidden, fighter is not rendered but still updates animations
+     * @param fighterId 0 = player, 1 = boss
+     * @param visible true = render normally, false = invisible
+     */
+    setFighterVisible(fighterId: 0 | 1, visible: boolean): void {
+        this.fighterVisible[fighterId] = visible;
+    }
+
+    /**
+     * Get current fighter visibility state
+     */
+    isFighterVisible(fighterId: 0 | 1): boolean {
+        return this.fighterVisible[fighterId];
+    }
+
+    /**
+     * Get current camera X position (for overlay synchronization)
+     */
+    getCameraX(): number {
+        return this.cameraX;
+    }
+
+    /**
+     * Get camera left edge (left boundary of viewport)
+     * Used for overlay coordinate conversion: screenX = gameX - cameraLeft
+     */
+    getCameraLeft(): number {
+        return this.cameraLeft;
+    }
+
+    /**
+     * Get fighter's rendered screen position
+     * Returns the ACTUAL position where the skeleton is drawn on screen
+     * skeleton.x is already in screen space (after camera transform)
+     * skeleton.y is in Spine space, convert to screen: DESIGN_HEIGHT - skeleton.y
+     */
+    getFighterScreenPosition(fighterId: 0 | 1): { x: number; y: number } | null {
+        const fighter = this.fighters[fighterId];
+        if (!fighter) return null;
+        
+        return {
+            x: fighter.skeleton.x,
+            y: DESIGN_HEIGHT - fighter.skeleton.y
+        };
+    }
+
+    /**
+     * Show centered text announcement (for boss events, etc.)
+     */
+    showCenteredText(text: string, color: string = '#ffffff', scale: number = 2.0): void {
+        if (!this.combatTextRenderer) {
+            console.warn('[SpineRenderer] Cannot show centered text - combatTextRenderer not initialized');
+            return;
+        }
+        
+        // Use phaseChange event type to trigger centered text
+        const fakeEvent = {
+            type: 'phaseChange' as const,
+            fighter: 0 as const,
+            phaseName: text,
+            hpPercent: 100,
+        };
+        
+        // The combatTextRenderer will handle this as a centered announcement
+        if (this.lastBoneSamples) {
+            this.combatTextRenderer.handleEvent(fakeEvent, this.lastBoneSamples);
         }
     }
 

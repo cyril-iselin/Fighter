@@ -3,6 +3,7 @@
 // ============================================================================
 
 import { Loadout } from '../../core/types';
+import type { BossEventDefinition } from './events';
 
 /**
  * Buff effect types
@@ -92,6 +93,8 @@ export interface EndlessLevelConfig {
   aiId: string;
   bossHealth: number;
   bossDamageMultiplier: number;
+  /** Boss events that trigger at HP thresholds */
+  events?: BossEventDefinition[];
 }
 
 /**

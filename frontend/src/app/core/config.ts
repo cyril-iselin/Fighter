@@ -78,6 +78,9 @@ export interface PhysicsConfig {
   minX: number;
   maxX: number;
   minDistance: number;
+  /** Arena bounds (doubled for larger arena) */
+  arenaMinX: number;
+  arenaMaxX: number;
 }
 
 export const PHYSICS: PhysicsConfig = {
@@ -88,4 +91,6 @@ export const PHYSICS: PhysicsConfig = {
   minX: 100,
   maxX: 1820,
   minDistance: 120,
+  arenaMinX: -2000,    // Doubled arena left bound
+  arenaMaxX: 7840,     // Doubled arena right bound
 };

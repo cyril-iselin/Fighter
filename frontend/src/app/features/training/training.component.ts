@@ -10,6 +10,7 @@ import { AiHealthbarComponent } from '../../shared/components/ai-healthbar/ai-he
 import { AISelectionService, type AIOption } from '../../ai/ai-selection.service';
 import { initializeAISelection } from '../../ai/init';
 import { getAudioPlayer, initializeAudio } from '../../adapters/audio';
+import { TICK_RATE } from 'src/app/core/config';
 
 @Component({
   selector: 'app-training',
@@ -28,7 +29,7 @@ export class TrainingComponent implements OnInit, AfterViewInit, OnDestroy {
   
   // Reactive state
   tickCount = signal(0);
-  fps = signal(60);
+  fps = signal(TICK_RATE);
   paused = signal(true);  // Start paused
   showPauseMenu = signal(true);  // Show pause menu on entry
   timeScale = signal(1.0);

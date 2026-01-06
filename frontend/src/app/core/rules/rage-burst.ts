@@ -8,6 +8,7 @@
 // Configuration is per-boss-phase via BossPhase.rageBurst
 // ============================================================================
 
+import { TICK_RATE } from '../config';
 import type { Fighter, GameEvent } from '../types';
 
 /**
@@ -58,7 +59,7 @@ export function checkProximityRageBurst(
   // Check if rage burst is on cooldown
   if (currentTick < boss.rageBurstCooldownTick) {
     // Debug: Log cooldown status occasionally
-    if (currentTick % 60 === 0) {
+    if (currentTick % TICK_RATE === 0) {
       console.log(`[RageBurst] On cooldown until tick ${boss.rageBurstCooldownTick}, current: ${currentTick}`);
     }
     return null;

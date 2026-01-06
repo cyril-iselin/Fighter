@@ -48,6 +48,7 @@ export class GameLoop {
   private readonly inputHandler: InputHandler;
   private aiBrain: IFighterBrain;
   private aiEnabled: boolean;
+  private bossInteractionEnabled: boolean = true;  // Disable facing/collision during events
   private readonly spineAdapter: SpineAdapter;
   private readonly soundAdapter: SoundAdapter;
   private readonly bufferManager: BufferManager;  // Input buffer for cancel system
@@ -213,6 +214,14 @@ export class GameLoop {
   }
 
   /**
+   * Toggles boss interaction (facing/collision) - used during boss events
+   */
+  setBossInteractionEnabled(enabled: boolean): void {
+    this.bossInteractionEnabled = enabled;
+    console.log(`[GameLoop] Boss interaction ${enabled ? 'enabled' : 'disabled'}`);
+  }
+
+  /**
    * Hot-swap AI brain during runtime
    * @param brain New brain instance to use
    */
@@ -266,6 +275,14 @@ export class GameLoop {
    */
   getState(): Readonly<MatchState> {
     return this.matchState;
+  }
+
+  /**
+   * Modify match state directly (for event rewards etc.)
+   * Use sparingly - only for state changes that need to persist across ticks
+   */
+  modifyState(modifier: (state: MatchState) => void): void {
+    modifier(this.matchState);
   }
 
   /**
@@ -344,7 +361,7 @@ export class GameLoop {
     }
 
     // Step core simulation
-    const result = step(this.matchState, [intent0, intent1], this.bufferManager);
+    const result = step(this.matchState, [intent0, intent1], this.bufferManager, this.bossInteractionEnabled);
     this.matchState = result.state;
     this.lastEvents = result.events;
 

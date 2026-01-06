@@ -15,8 +15,6 @@ const DT = 1 / TICK_RATE;  // Fixed timestep: 1/60 = 0.0166... seconds
 // MOVEMENT
 // ============================================================================
 
-const IMPULSE_FRICTION = 0.88; // Impulse velocity reduction per tick
-
 /**
  * Applies horizontal movement with separated movement and impulse velocities
  */

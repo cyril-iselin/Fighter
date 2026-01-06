@@ -1,6 +1,6 @@
-import { 
-  Component, OnInit, OnDestroy, AfterViewInit, 
-  ViewChild, ElementRef, signal, computed, HostListener 
+import {
+  Component, OnInit, OnDestroy, AfterViewInit,
+  ViewChild, ElementRef, signal, computed, HostListener
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -17,21 +17,26 @@ import { BuffSelectionComponent } from './components/buff-selection/buff-selecti
 import { BuffHudComponent } from './components/buff-hud/buff-hud.component';
 import { GameOverComponent } from './components/game-over/game-over.component';
 
-import { 
+import {
   EndlessPhase, EndlessRunState, ActiveBuff, BuffDefinition,
-  PlayerModifiers, calculateModifiers 
+  PlayerModifiers, calculateModifiers
 } from './endless-types';
 import { initializeCharacters } from '../../characters/registry';
-import { 
-  getLevelConfig, selectRandomBuffs, ENDLESS_SCALING, BUFF_POOL 
+import {
+  getLevelConfig, selectRandomBuffs, ENDLESS_SCALING, BUFF_POOL
 } from './endless-config';
+
+// Boss Event System
+import { BossEventManager, BossEventRenderer, BossEventResult } from './events';
+import { TICK_RATE, PHYSICS } from 'src/app/core/config';
+import { DESIGN_HEIGHT, GROUND_Y } from 'src/app/adapters/spine-bone-transform';
 
 @Component({
   selector: 'app-endless',
   standalone: true,
   imports: [
-    CommonModule, 
-    PlayerHealthbarComponent, 
+    CommonModule,
+    PlayerHealthbarComponent,
     AiHealthbarComponent,
     LevelIntroComponent,
     BuffSelectionComponent,
@@ -43,15 +48,15 @@ import {
 })
 export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('canvasContainer', { static: false }) canvasRef!: ElementRef<HTMLDivElement>;
-  
+
   private gameLoop?: GameLoop;
   private spineRenderer?: SpineRenderer;
   private lastFrameTime: number = 0;
-  
+
   // Regeneration tracking (ticks since last regen)
   private regenTickAccumulator: number = 0;
-  private readonly TICKS_PER_SECOND = 60;
-  
+  private readonly TICKS_PER_SECOND = TICK_RATE;
+
   // Endless mode state
   phase = signal<EndlessPhase>('intro');
   runState = signal<EndlessRunState>({
@@ -63,25 +68,25 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
     totalKills: 0,
     totalDamageDealt: 0,
   });
-  
+
   // Current level config
   currentLevelConfig = computed(() => getLevelConfig(this.runState().currentLevel));
-  
+
   // Available buff choices
   buffChoices = signal<BuffDefinition[]>([]);
-  
+
   // Player modifiers from buffs
   playerModifiers = computed(() => {
     const state = this.runState();
     return calculateModifiers(state.activeBuffs, state.loadout);
   });
-  
+
   // Match state
   private matchState = signal<MatchState | null>(null);
   fighter0 = computed(() => {
     const state = this.matchState();
     if (!state) return this.createEmptyFighter();
-    
+
     // Override with run state HP
     const fighter = { ...state.fighters[0] };
     fighter.health = this.runState().playerHealth;
@@ -89,19 +94,25 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
     return fighter;
   });
   fighter1 = computed(() => this.matchState()?.fighters[1] ?? this.createEmptyFighter());
-  
+
   // Spine status
   spineStatus = signal<SpineStatus>('loading');
-  
+
   // Available backgrounds for random selection
   private readonly availableBackgrounds: BackgroundId[] = ['city1', 'city2', 'city3', 'city4', 'forrest', 'castle', 'destroyedCity'];
-  
+
   // Preloaded background for next fight
   private preloadedBackground: BackgroundId | null = null;
-  
+
   // Fight ending state (for death animation delay)
   private fightEnding = false;
-  
+
+  // Boss Event System
+  private eventManager?: BossEventManager;
+  private eventRenderer?: BossEventRenderer;
+  private eventActive = signal(false);
+  private lastRenderTime = 0;
+
   // Game over stats
   gameOverStats = computed(() => ({
     level: this.runState().currentLevel,
@@ -109,7 +120,7 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
     damage: this.runState().totalDamageDealt,
   }));
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   @HostListener('window:keydown.escape', ['$event'])
   handleEscape(event: Event): void {
@@ -139,6 +150,7 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
     audio.stopMusic(true);
     this.spineRenderer?.dispose();
     this.gameLoop?.dispose();
+    this.eventRenderer?.dispose();
   }
 
   // ============================================================================
@@ -147,31 +159,31 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private async initializeSpine(): Promise<void> {
     this.spineStatus.set('loading');
-    
+
     // Initialize all character providers FIRST
     await initializeCharacters();
-    
+
     const canvas = document.createElement('canvas');
     const container = this.canvasRef.nativeElement;
-    
+
     const dpr = window.devicePixelRatio || 1;
     canvas.width = Math.floor(container.clientWidth * dpr);
     canvas.height = Math.floor(container.clientHeight * dpr);
     canvas.style.width = '100%';
     canvas.style.height = '100%';
     canvas.style.display = 'block';
-    
+
     container.appendChild(canvas);
-    
+
     this.spineRenderer = new SpineRenderer(canvas);
-    
+
     try {
       await this.spineRenderer.initialize();
       this.spineStatus.set('ready');
-      
+
       // Preload first background immediately
       await this.preloadNextBackground();
-      
+
       // Start render loop
       this.startRenderLoop();
     } catch (error) {
@@ -186,19 +198,19 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private startRenderLoop(): void {
     this.lastFrameTime = performance.now() / 1000;
-    
+
     const render = () => {
       if (this.spineStatus() !== 'ready') return;
-      
+
       const now = performance.now() / 1000;
       const delta = now - this.lastFrameTime;
       this.lastFrameTime = now;
-      
+
       this.spineRenderer?.render(delta);
-      
+
       requestAnimationFrame(render);
     };
-    
+
     requestAnimationFrame(render);
   }
 
@@ -213,23 +225,23 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async onIntroStart(): Promise<void> {
-    
+
     // Reset fight ending state
     this.fightEnding = false;
-    
+
     // Use preloaded background or load one now
     if (!this.preloadedBackground) {
       await this.preloadNextBackground();
     }
-    
+
     // Switch to fight phase (background is already loaded)
     this.phase.set('fight');
-    
+
     // Initialize audio
     await initializeAudio();
     const audio = getAudioPlayer();
     await audio.playMusic('fight');
-    
+
     // Start the fight (async - switches boss character)
     await this.startFight();
   }
@@ -239,11 +251,11 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
     let newBuffs = [...state.activeBuffs];
     let newLoadout = state.loadout;
     let newHealth = state.playerHealth;
-    
+
     // Process each selected buff
     for (const buff of buffs) {
       const existingIndex = newBuffs.findIndex(b => b.id === buff.id);
-      
+
       if (existingIndex >= 0 && buff.stackable) {
         // Stack existing buff
         newBuffs[existingIndex] = {
@@ -254,17 +266,17 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
         // Add new buff
         newBuffs = [...newBuffs, { id: buff.id, stacks: 1 }];
       }
-      
+
       // Check for sword mastery
       if (buff.id === 'sword_mastery') {
         newLoadout = 'sword';
       }
     }
-    
+
     // Apply max health bonus immediately
     const newModifiers = calculateModifiers(newBuffs, newLoadout);
     const newMaxHealth = ENDLESS_SCALING.playerStartMaxHp + newModifiers.maxHealthBonus;
-    
+
     // Process vitality buffs healing
     for (const buff of buffs) {
       if (buff.id === 'vitality') {
@@ -273,7 +285,7 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
         newHealth = Math.min(newHealth + 75, newMaxHealth);
       }
     }
-    
+
     this.runState.set({
       ...state,
       activeBuffs: newBuffs,
@@ -282,7 +294,7 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
       playerHealth: newHealth,
       currentLevel: state.currentLevel + 1,
     });
-    
+
     // Move to next level intro
     this.phase.set('intro');
   }
@@ -295,21 +307,21 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
     const levelConfig = this.currentLevelConfig();
     const state = this.runState();
     const modifiers = this.playerModifiers();
-    
+
     // Calculate actual max health with buffs
     const playerMaxHealth = ENDLESS_SCALING.playerStartMaxHp + modifiers.maxHealthBonus;
-    
+
     // Ensure player health doesn't exceed max
     const playerHealth = Math.min(state.playerHealth, playerMaxHealth);
-    
+
     // Switch boss character BEFORE creating GameLoop
     const bossCharacterId = this.getCharacterIdFromAI(levelConfig.aiId);
     if (this.spineRenderer) {
       await this.spineRenderer.switchFighterCharacter(1, bossCharacterId);
     }
-    
+
     const skeletons = this.spineRenderer?.getSkeletons() ?? [];
-    
+
     this.gameLoop = new GameLoop({
       loadouts: [modifiers.loadout, 'bare'],  // Use modifiers.loadout for sword_mastery buff
       characterIds: ['stickman', bossCharacterId],
@@ -318,20 +330,33 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
       spineRenderer: this.spineRenderer,
     });
 
+    // Initialize Boss Event System
+    this.initializeEventSystem(levelConfig.events ?? []);
+
     // Override initial health values
     // Note: We need to modify the game state after creation
-    
+
     // Reset regeneration accumulator for new fight
     this.regenTickAccumulator = 0;
-    
+
     // Subscribe to tick updates
     this.gameLoop.onTick((matchState, events) => {
-      // Apply swift buff - increase player movement speed
+      // Apply swift buff - increase player movement speed (always, even during events)
       const modifiers = this.playerModifiers();
       if (modifiers.speedMultiplier !== 1.0) {
         matchState.fighters[0].speedMultiplier = modifiers.speedMultiplier;
       }
-      
+
+      // Skip normal processing during active event
+      if (this.eventActive()) {
+        // CRITICAL: Update SpineRenderer FIRST so cameraX is current for event rendering!
+        this.spineRenderer?.applySnapshot(matchState);
+        // Only update event system
+        this.tickEventSystem(matchState);
+        this.matchState.set(matchState);
+        return;
+      }
+
       // Apply regeneration buff (HP per second)
       if (modifiers.hpRegenPerSecond > 0) {
         this.regenTickAccumulator++;
@@ -340,79 +365,254 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
           this.healPlayer(modifiers.hpRegenPerSecond);
         }
       }
-      
+
+      // Check for boss events
+      // CRITICAL: applySnapshot must be called BEFORE tickEventSystem 
+      // so cameraX is synchronized between SpineRenderer and EventRenderer
+      this.spineRenderer?.applySnapshot(matchState);
+      this.tickEventSystem(matchState);
+
       // Apply player modifiers to damage dealt
       this.processEventsWithModifiers(matchState, events);
-      
+
       this.matchState.set(matchState);
-      this.spineRenderer?.applySnapshot(matchState);
-      this.spineRenderer?.handleEvents(events);
-      
+
       // Check for fight end
       this.checkFightEnd(matchState, events);
     });
 
     // Start the loop
     this.gameLoop.start();
-    
+
     // Override player health after start
     this.overridePlayerHealth(playerHealth, playerMaxHealth);
-    
+
     // Override boss health
     this.overrideBossHealth(levelConfig.bossHealth);
+  }
+
+  // ============================================================================
+  // BOSS EVENT SYSTEM
+  // ============================================================================
+
+  private initializeEventSystem(events: import('./events').BossEventDefinition[]): void {
+    // Create renderer if needed
+    if (!this.eventRenderer && this.canvasRef?.nativeElement) {
+      this.eventRenderer = new BossEventRenderer(this.canvasRef.nativeElement);
+    }
+
+    // Create manager with callbacks
+    this.eventManager = new BossEventManager(events, {
+      onEventStart: (event) => {
+        console.log('[EndlessMode] Boss event started:', event.definition.type);
+        this.eventActive.set(true);
+
+        // Show announcement
+        if (event.definition.announcement) {
+          this.spineRenderer?.showCenteredText(event.definition.announcement, '#ffaa00', 2.0);
+        }
+
+        // Hide boss
+        this.spineRenderer?.setFighterVisible(1, false);
+
+        // Pause AI
+        this.gameLoop?.setAIEnabled(false);
+        
+        // Disable boss interaction (no facing/collision)
+        this.gameLoop?.setBossInteractionEnabled(false);
+      },
+      onEventEnd: (result) => {
+        console.log('[EndlessMode] Boss event ended:', result.success ? 'SUCCESS' : 'FAIL');
+        this.eventActive.set(false);
+
+        // Show boss
+        this.spineRenderer?.setFighterVisible(1, true);
+
+        // Resume AI
+        this.gameLoop?.setAIEnabled(true);
+        
+        // Re-enable boss interaction
+        this.gameLoop?.setBossInteractionEnabled(true);
+
+        // Apply result
+        this.applyEventResult(result);
+
+        // Clear event overlay
+        this.eventRenderer?.clear();
+      },
+    });
+
+    this.lastRenderTime = performance.now();
+  }
+
+  private tickEventSystem(matchState: MatchState): void {
+    if (!this.eventManager) return;
+
+    const boss = matchState.fighters[1];
+    const player = matchState.fighters[0];
+
+    const cameraLeft = this.spineRenderer?.getCameraLeft() ?? 0;
+    const groundY =  DESIGN_HEIGHT - GROUND_Y;
+
+    // Tick the event manager
+    this.eventManager.tick(
+      boss.health,
+      boss.maxHealth,
+      player.x,
+      player.y,
+      boss.x,
+      matchState.tick,
+      cameraLeft,
+      groundY
+    );
+
+    // Render event overlay
+    const now = performance.now();
+    const deltaMs = now - this.lastRenderTime;
+    this.lastRenderTime = now;
+
+    const activeEvent = this.eventManager.getActiveEvent();
+    if (activeEvent && this.eventRenderer) {
+      this.eventRenderer.setCameraLeft(cameraLeft);
+      this.eventRenderer.render(activeEvent, deltaMs, groundY);
+    }
+    // Result is handled by callback
+  }
+
+  private applyEventResult(result: BossEventResult): void {
+    if (!this.gameLoop) return;
+
+    if (result.success && result.reward) {
+      const reward = result.reward;
+
+      // Apply rewards directly to GameLoop state so they persist
+      this.gameLoop.modifyState((state) => {
+        // Stun boss
+        if (reward.bossStunTicks) {
+          state.fighters[1].pressureStunTicks = reward.bossStunTicks;
+          state.fighters[1].state = 'hurt';
+          state.fighters[1].stateTicks = 0;
+          console.log('[EndlessMode] Boss stunned for', reward.bossStunTicks, 'ticks');
+        }
+
+        // Grant special meter
+        if (reward.specialMeter) {
+          const oldMeter = state.fighters[0].specialMeter;
+          state.fighters[0].specialMeter = Math.min(100,
+            state.fighters[0].specialMeter + reward.specialMeter);
+          console.log('[EndlessMode] Special meter:', oldMeter, '->', state.fighters[0].specialMeter);
+        }
+
+        // Damage boss
+        if (reward.bossDamage) {
+          state.fighters[1].health = Math.max(0,
+            state.fighters[1].health - reward.bossDamage);
+        }
+      });
+
+      // Heal player (uses separate runState)
+      if (reward.healPlayer) {
+        this.healPlayer(reward.healPlayer);
+      }
+
+      console.log('[EndlessMode] Event reward applied:', reward);
+
+      // Show success message
+      this.spineRenderer?.showCenteredText('✅ EVENT ERFOLGREICH', '#44ff44');
+    } else if (!result.success && result.penalty) {
+      const penalty = result.penalty;
+
+      // Apply penalties directly to GameLoop state
+      this.gameLoop.modifyState((state) => {
+        // Damage player
+        if (penalty.playerDamage) {
+          state.fighters[0].health = Math.max(0,
+            state.fighters[0].health - penalty.playerDamage);
+        }
+
+        // Stun player
+        if (penalty.playerStunTicks) {
+          state.fighters[0].pressureStunTicks = penalty.playerStunTicks;
+          state.fighters[0].state = 'hurt';
+          state.fighters[0].stateTicks = 0;
+        }
+
+        // Heal boss
+        if (penalty.bossHeal) {
+          state.fighters[1].health = Math.min(
+            state.fighters[1].maxHealth,
+            state.fighters[1].health + penalty.bossHeal
+          );
+        }
+      });
+
+      // Also update runState for player damage
+      if (penalty.playerDamage) {
+        const runState = this.runState();
+        this.runState.set({
+          ...runState,
+          playerHealth: Math.max(0, runState.playerHealth - penalty.playerDamage),
+        });
+      }
+
+      console.log('[EndlessMode] Event penalty applied:', penalty);
+
+      // Show failure message
+      this.spineRenderer?.showCenteredText('❌ EVENT FEHLGESCHLAGEN', '#ff4444');
+    }
   }
 
   private processEventsWithModifiers(state: MatchState, events: GameEvent[]): void {
     const modifiers = this.playerModifiers();
     const runState = this.runState();
-    
+
     for (let i = 0; i < events.length; i++) {
       const event = events[i];
-      
+
       // Apply damage multipliers for player attacks
       if (event.type === 'hit' && event.attacker === 0) {
         const baseDamage = event.damage;
-        
+
         // Determine damage multiplier based on attack ID
         let damageMultiplier = 1.0;
         const attackId = event.attack?.toLowerCase() ?? '';
-        
+
         // Special attacks
         if (attackId === 'thousand_fists') {
           damageMultiplier = modifiers.damageSpecial;
-        } 
+        }
         // Heavy attacks
         else if (attackId === 'kick_high' || attackId === 'flying_kick' || attackId === 'salto_kick' || attackId === 'slash_heavy') {
           damageMultiplier = modifiers.damageHeavy;
-        } 
+        }
         // Light attacks (jab_double, reverse_kick, slash, and any others)
         else {
           damageMultiplier = modifiers.damageLight;
         }
-        
+
         // Calculate total damage with multiplier
         const totalDamage = Math.floor(baseDamage * damageMultiplier);
         const bonusDamage = totalDamage - baseDamage;
-        
+
         if (bonusDamage > 0) {
           // Apply bonus damage directly to boss HP
           state.fighters[1].health = Math.max(0, state.fighters[1].health - bonusDamage);
-          
+
           // Update event damage for combat text display
           (events[i] as any).damage = totalDamage;
         }
-        
+
         // Track total damage (base + bonus)
         this.runState.set({
           ...runState,
           totalDamageDealt: runState.totalDamageDealt + totalDamage,
         });
-        
+
         // HP on hit (vampirism)
         if (modifiers.hpOnHit > 0) {
           this.healPlayer(modifiers.hpOnHit);
         }
-        
+
         // Bonus special meter charge on hit (special_charge buff)
         if (modifiers.specialChargeMultiplier > 1.0) {
           const baseCharge = 10;
@@ -421,7 +621,7 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
             state.fighters[0].specialMeter = Math.min(100, state.fighters[0].specialMeter + bonusCharge);
           }
         }
-        
+
         // Extra pressure meter build on boss (pressure_master buff)
         if (modifiers.pressureMultiplier > 1.0) {
           const basePressure = 15;
@@ -431,26 +631,26 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         }
       }
-      
+
       // HP on parry + counter damage (parry mastery + counter strike)
       if (event.type === 'parry' && event.defender === 0) {
         // HP on parry
         if (modifiers.hpOnParry > 0) {
           this.healPlayer(modifiers.hpOnParry);
         }
-        
+
         // Counter strike - deal bonus damage to attacker (boss)
         if (modifiers.parryCounterDamage > 0) {
           state.fighters[1].health = Math.max(0, state.fighters[1].health - modifiers.parryCounterDamage);
         }
-        
+
         // Bonus special meter charge on parry (special_charge buff)
         if (modifiers.specialChargeMultiplier > 1.0) {
           const bonusCharge = Math.floor(12 * (modifiers.specialChargeMultiplier - 1.0));
           state.fighters[0].specialMeter = Math.min(100, state.fighters[0].specialMeter + bonusCharge);
         }
       }
-      
+
       // Block boost - heal small amount on successful block
       if (event.type === 'block' && event.defender === 0) {
         if (modifiers.blockReduction > 0) {
@@ -459,17 +659,17 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
           this.healPlayer(healAmount);
         }
       }
-      
+
       // Track damage taken by player - apply boss damage multiplier!
       if (event.type === 'hit' && event.defender === 0) {
         const levelConfig = this.currentLevelConfig();
         const bossMultiplier = levelConfig.bossDamageMultiplier;
         const baseDamage = event.damage;
         const totalDamage = Math.floor(baseDamage * bossMultiplier);
-        
+
         // Update event damage for display
         (events[i] as any).damage = totalDamage;
-        
+
         this.runState.update(s => ({
           ...s,
           playerHealth: Math.max(0, s.playerHealth - totalDamage),
@@ -482,7 +682,7 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
     const state = this.runState();
     const maxHealth = ENDLESS_SCALING.playerStartMaxHp + this.playerModifiers().maxHealthBonus;
     const newHealth = Math.min(state.playerHealth + amount, maxHealth);
-    
+
     this.runState.set({
       ...state,
       playerHealth: newHealth,
@@ -492,11 +692,11 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
   private checkFightEnd(state: MatchState, events: GameEvent[]): void {
     // Don't process if already ending
     if (this.fightEnding) return;
-    
+
     for (const event of events) {
       if (event.type === 'fightWon') {
         this.fightEnding = true;
-        
+
         // Let death animation play for 2 seconds before transitioning
         setTimeout(() => {
           if (event.winner === 0) {
@@ -505,35 +705,35 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
             this.onPlayerDefeat();
           }
         }, 2000);
-        
+
         return; // Only handle once
       }
     }
   }
 
   private async onPlayerVictory(): Promise<void> {
-    
+
     // Stop game loop
     this.gameLoop?.setPaused(true);
     this.gameLoop?.dispose();
     this.gameLoop = undefined;
-    
+
     // Calculate HP restore with First Aid bonus
     const state = this.runState();
     const modifiers = this.playerModifiers();
     const maxHealth = ENDLESS_SCALING.playerStartMaxHp + modifiers.maxHealthBonus;
-    
+
     // Base restore + First Aid bonus (e.g. 100 * (1 + 0.5) = 150 with one stack)
     const baseRestore = ENDLESS_SCALING.hpRestoreOnWin;
     const totalRestore = Math.floor(baseRestore * (1 + modifiers.victoryHealBonus));
     const newHealth = Math.min(state.playerHealth + totalRestore, maxHealth);
-    
+
     this.runState.set({
       ...state,
       playerHealth: newHealth,
       totalKills: state.totalKills + 1,
     });
-    
+
     // Generate buff choices
     const excludeIds = state.activeBuffs
       .filter(b => {
@@ -541,28 +741,28 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
         return def && !def.stackable;
       })
       .map(b => b.id);
-    
+
     this.buffChoices.set(selectRandomBuffs(5, excludeIds));
-    
+
     // Preload next background while showing buff selection
     this.preloadedBackground = null; // Clear old one
     await this.preloadNextBackground();
-    
+
     // Show buff selection
     this.phase.set('buff-select');
   }
 
   private onPlayerDefeat(): void {
-    
+
     // Stop game loop
     this.gameLoop?.setPaused(true);
     this.gameLoop?.dispose();
     this.gameLoop = undefined;
-    
+
     // Stop music
     const audio = getAudioPlayer();
     audio.stopMusic(true);
-    
+
     // Show game over
     this.phase.set('game-over');
   }
@@ -650,10 +850,10 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
       totalKills: 0,
       totalDamageDealt: 0,
     });
-    
+
     // Cleanup old game loop
     this.gameLoop?.dispose();
-    
+
     // Start fresh
     this.phase.set('intro');
   }

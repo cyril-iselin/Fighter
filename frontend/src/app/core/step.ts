@@ -19,7 +19,8 @@ import type { BufferManager } from './buffer-manager';
 export function step(
   state: MatchState,
   intents: [Intent, Intent],
-  bufferManager: BufferManager
+  bufferManager: BufferManager,
+  bossInteractionEnabled: boolean = true
 ): StepResult {
   // Deep clone state (simple approach for now)
   const newState: MatchState = {
@@ -79,10 +80,12 @@ export function step(
   // Position constraints
   Physics.clampToArenaBounds(f0);
   Physics.clampToArenaBounds(f1);
-  Physics.enforceMinDistance(f0, f1);
-
-  // Update facing
-  Physics.updateFacing(f0, f1);
+  
+  // Boss interaction (facing/collision) - disabled during boss events
+  if (bossInteractionEnabled) {
+    Physics.enforceMinDistance(f0, f1);
+    Physics.updateFacing(f0, f1);
+  }
 
   // === PHASE 5: Tick Counters ===
   tickCounters(f0, newState.tick);
