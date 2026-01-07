@@ -15,7 +15,7 @@ import type { BossEventDefinition } from './events';
 export const EVENT_GROUND_CIRCLE_EASY: BossEventDefinition = {
   id: 'ground-circle-easy',
   type: 'ground-circle',
-  hpTrigger: 60,
+  hpTrigger: 75,
   durationTicks: 540, // 9 seconds total for all 3 catches
   radius: 150,
   requiredSuccesses: 3,
@@ -35,7 +35,7 @@ export const EVENT_GROUND_CIRCLE_EASY: BossEventDefinition = {
 export const EVENT_QUICK_DASH_EASY: BossEventDefinition = {
   id: 'quick-dash-easy',
   type: 'quick-dash',
-  hpTrigger: 90,
+  hpTrigger: 15,
   durationTicks: 450, // 7.5 seconds total for all 3 catches
   targetRadius: 200,
   spawnHeight: -350, // Negative Y = in the air (Y goes negative when jumping)
@@ -57,7 +57,7 @@ export const EVENT_QUICK_DASH_EASY: BossEventDefinition = {
 export const EVENT_GROUND_CIRCLE_HARD: BossEventDefinition = {
   id: 'ground-circle-hard',
   type: 'ground-circle',
-  hpTrigger: 25,
+  hpTrigger: 65,
   durationTicks: 450, // 4 seconds total for all 3 catches
   radius: 120,
   requiredSuccesses: 3,
@@ -78,7 +78,7 @@ export const EVENT_GROUND_CIRCLE_HARD: BossEventDefinition = {
 export const EVENT_QUICK_DASH_HARD: BossEventDefinition = {
   id: 'quick-dash-hard',
   type: 'quick-dash',
-  hpTrigger: 50,
+  hpTrigger: 25,
   durationTicks: 450, // 4.5 seconds total for all 3 catches
   targetRadius: 200,
   spawnHeight: -420, // Higher in air (more negative = higher)
@@ -269,7 +269,6 @@ export const PREDEFINED_LEVELS: EndlessLevelConfig[] = [
     aiId: 'stickman-normal',
     bossHealth: 300,
     bossDamageMultiplier: 1.0,
-    events: [EVENT_QUICK_DASH_EASY, EVENT_GROUND_CIRCLE_EASY],
   },
   {
     level: 2,
@@ -278,7 +277,7 @@ export const PREDEFINED_LEVELS: EndlessLevelConfig[] = [
     aiId: 'boss1-aggressive',
     bossHealth: 350,
     bossDamageMultiplier: 1.0,
-    // No events yet - still learning
+    events: [EVENT_QUICK_DASH_EASY], // First event introduction
   },
   {
     level: 3,
@@ -287,7 +286,7 @@ export const PREDEFINED_LEVELS: EndlessLevelConfig[] = [
     aiId: 'boss2-defensive',
     bossHealth: 400,
     bossDamageMultiplier: 1.0,
-    events: [EVENT_GROUND_CIRCLE_EASY], // First event introduction
+    events: [EVENT_GROUND_CIRCLE_EASY],
   },
   {
     level: 4,
@@ -316,22 +315,22 @@ export const PREDEFINED_LEVELS: EndlessLevelConfig[] = [
 export const ENDLESS_SCALING = {
   /** Base boss HP for Legend levels (level 6+) */
   legendBaseHp: 900,
-  
+
   /** HP increase per Legend level */
   hpPerLevel: 100,
-  
+
   /** Base damage multiplier for Legend levels */
   legendBaseDamage: 1.3,
-  
+
   /** Damage increase per Legend level (0.1 = 10%) */
   damagePerLevel: 0.2,
-  
+
   /** HP restored after each victory */
   hpRestoreOnWin: 50,
-  
+
   /** Starting player HP */
   playerStartHp: 500,
-  
+
   /** Starting player max HP */
   playerStartMaxHp: 500,
 };
@@ -359,17 +358,17 @@ export function getLevelConfig(level: number): EndlessLevelConfig {
   if (level <= PREDEFINED_LEVELS.length) {
     return PREDEFINED_LEVELS[level - 1];
   }
-  
+
   // Generate scaled Legend level
   const legendLevel = level - PREDEFINED_LEVELS.length;
   const aiIndex = (legendLevel - 1) % LEGEND_AI_POOL.length;
-  
+
   // Legend levels get random event (0 or 1)
   const allEvents: BossEventDefinition[] = [
     EVENT_QUICK_DASH_HARD,
     EVENT_GROUND_CIRCLE_HARD,
   ];
-  
+
   // 70% chance for an event, 30% no event
   let events: BossEventDefinition[] = [];
   if (Math.random() < 0.7) {
@@ -377,7 +376,7 @@ export function getLevelConfig(level: number): EndlessLevelConfig {
     const randomIndex = Math.floor(Math.random() * allEvents.length);
     events = [allEvents[randomIndex]];
   }
-  
+
   return {
     level,
     title: `Legend ${legendLevel}`,
@@ -396,22 +395,22 @@ export function getLevelConfig(level: number): EndlessLevelConfig {
  */
 export function selectRandomBuffs(count: number, excludeIds: string[] = []): BuffDefinition[] {
   const available = BUFF_POOL.filter(b => !excludeIds.includes(b.id));
-  
+
   if (available.length <= count) {
     return [...available];
   }
-  
+
   const selected: BuffDefinition[] = [];
   const pool = [...available];
-  
+
   for (let i = 0; i < count && pool.length > 0; i++) {
     // Calculate total weight
     const totalWeight = pool.reduce((sum, buff) => sum + RARITY_WEIGHTS[buff.rarity], 0);
-    
+
     // Random selection based on weight
     let random = Math.random() * totalWeight;
     let selectedIndex = 0;
-    
+
     for (let j = 0; j < pool.length; j++) {
       random -= RARITY_WEIGHTS[pool[j].rarity];
       if (random <= 0) {
@@ -419,11 +418,11 @@ export function selectRandomBuffs(count: number, excludeIds: string[] = []): Buf
         break;
       }
     }
-    
+
     selected.push(pool[selectedIndex]);
     pool.splice(selectedIndex, 1);
   }
-  
+
   return selected;
 }
 
