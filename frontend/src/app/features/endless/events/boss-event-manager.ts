@@ -132,7 +132,7 @@ export class BossEventManager {
             successCount: 0,
             successDelayTicks: 0, // Countdown after success before respawn
         } as any;
-        
+
         this.activeEvent = activeEvent;
 
         // Notify callback
@@ -152,45 +152,45 @@ export class BossEventManager {
         switch (definition.type) {
             case 'ground-circle': {
                 let targetX: number;
-                
+
                 // Try to spawn away from previous position
                 if (previousX !== undefined) {
                     // Spawn on opposite side or far away
                     const arenaCenter = (PHYSICS.minX + PHYSICS.maxX) / 2;
                     const isLeftSide = previousX < arenaCenter;
                     const preferredSide = isLeftSide ? 1 : -1; // Opposite side
-                    
+
                     const sideMin = preferredSide > 0 ? arenaCenter : PHYSICS.minX;
                     const sideMax = preferredSide > 0 ? PHYSICS.maxX : arenaCenter;
-                    
+
                     targetX = sideMin + Math.random() * (sideMax - sideMin);
                 } else {
                     // First spawn - anywhere in arena
                     targetX = PHYSICS.minX + Math.random() * (PHYSICS.maxX - PHYSICS.minX);
                 }
-                
+
                 return { x: targetX, y: 0 };
             }
 
             case 'quick-dash': {
                 let targetX: number;
-                
+
                 // Try to spawn away from previous position
                 if (previousX !== undefined) {
                     // Spawn on opposite side or far away
                     const arenaCenter = (PHYSICS.minX + PHYSICS.maxX) / 2;
                     const isLeftSide = previousX < arenaCenter;
                     const preferredSide = isLeftSide ? 1 : -1; // Opposite side
-                    
+
                     const sideMin = preferredSide > 0 ? arenaCenter : PHYSICS.minX;
                     const sideMax = preferredSide > 0 ? PHYSICS.maxX : arenaCenter;
-                    
+
                     targetX = sideMin + Math.random() * (sideMax - sideMin);
                 } else {
                     // First spawn - anywhere in arena
                     targetX = PHYSICS.minX + Math.random() * (PHYSICS.maxX - PHYSICS.minX);
                 }
-                
+
                 // Add random height variation (0-100) for variety
                 const baseHeight = definition.spawnHeight ?? 0;
                 const height = baseHeight + Math.random() * 100;
@@ -216,7 +216,7 @@ export class BossEventManager {
         // If in success delay countdown, decrement and skip condition check
         if (evt.successDelayTicks > 0) {
             evt.successDelayTicks--;
-            
+
             // When delay expires, respawn at new location
             if (evt.successDelayTicks === 0) {
                 this.activeEvent.targetPosition = this.calculateTargetPosition(
@@ -224,7 +224,7 @@ export class BossEventManager {
                     this.activeEvent.targetPosition.x
                 );
                 this.activeEvent.conditionMet = false; // Reset for next catch
-                
+
                 console.log(`[EventManager] Respawning at new position: x=${this.activeEvent.targetPosition.x.toFixed(0)} y=${this.activeEvent.targetPosition.y.toFixed(0)}`);
             }
         } else {
@@ -290,9 +290,15 @@ export class BossEventManager {
             }
 
             case 'quick-dash': {
-                const r = definition.targetRadius;
-                const hit = (dx * dx + dy * dy) <= (r * r);
-                return hit;
+                const orbR = definition.targetRadius;
+                const playerCatchR = 40;
+
+                const r = orbR + playerCatchR;
+
+                const yBias = -20;
+                const dyBiased = dy + yBias;
+
+                return (dx * dx + dyBiased * dyBiased) <= (r * r);
             }
         }
     }

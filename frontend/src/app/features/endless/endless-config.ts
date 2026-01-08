@@ -35,10 +35,10 @@ export const EVENT_GROUND_CIRCLE_EASY: BossEventDefinition = {
 export const EVENT_QUICK_DASH_EASY: BossEventDefinition = {
   id: 'quick-dash-easy',
   type: 'quick-dash',
-  hpTrigger: 15,
+  hpTrigger: 15, // 15% HP
   durationTicks: 450, // 7.5 seconds total for all 3 catches
   targetRadius: 200,
-  spawnHeight: -350, // Negative Y = in the air (Y goes negative when jumping)
+  spawnHeight: -550, // Negative Y = in the air (Y goes negative when jumping)
   requiredSuccesses: 3,
   announcement: '⚡ SPRING IN DEN ORB! ⚡',
   successReward: {
@@ -81,7 +81,7 @@ export const EVENT_QUICK_DASH_HARD: BossEventDefinition = {
   hpTrigger: 25,
   durationTicks: 450, // 4.5 seconds total for all 3 catches
   targetRadius: 200,
-  spawnHeight: -420, // Higher in air (more negative = higher)
+  spawnHeight: -600, // Higher in air (more negative = higher)
   requiredSuccesses: 3,
   announcement: '⚡ SPRING IN DEN ORB! ⚡',
   successReward: {
@@ -268,7 +268,7 @@ export const PREDEFINED_LEVELS: EndlessLevelConfig[] = [
     description: 'Wer ist stärker, Du oder Du?',
     aiId: 'stickman-normal',
     bossHealth: 300,
-    bossDamageMultiplier: 1.0,
+    bossDamageMultiplier: 1.0
   },
   {
     level: 2,
