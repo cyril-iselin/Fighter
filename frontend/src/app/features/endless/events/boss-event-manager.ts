@@ -131,6 +131,7 @@ export class BossEventManager {
             conditionMet: false,
             successCount: 0,
             successDelayTicks: 0, // Countdown after success before respawn
+            holdTime: 0, // Ticks spent inside target (for ground-circle)
         } as any;
 
         this.activeEvent = activeEvent;
@@ -231,22 +232,49 @@ export class BossEventManager {
             // Normal condition checking - not in delay
             const isInTarget = this.checkCondition(playerX, playerY, cameraLeft, groundY);
 
-            // If player just entered target zone and hasn't been counted yet
-            if (isInTarget && !this.activeEvent.conditionMet) {
-                this.activeEvent.conditionMet = true;
-                this.activeEvent.successCount++;
+            // Ground circle: requires holding for time
+            if (def.type === 'ground-circle') {
+                const REQUIRED_HOLD_TICKS = 30; // 0.5 seconds @ 60fps
+                const evt = this.activeEvent as any;
 
-                console.log(`[EventManager] Success ${this.activeEvent.successCount}/${requiredSuccesses}!`);
+                if (isInTarget) {
+                    evt.holdTime = (evt.holdTime || 0) + 1;
+                    
+                    // Check if held long enough
+                    if (evt.holdTime >= REQUIRED_HOLD_TICKS && !this.activeEvent.conditionMet) {
+                        this.activeEvent.conditionMet = true;
+                        this.activeEvent.successCount++;
+                        console.log(`[EventManager] Ground circle success ${this.activeEvent.successCount}/${requiredSuccesses}!`);
 
-                // Check if all successes achieved
-                if (this.activeEvent.successCount >= requiredSuccesses) {
-                    console.log(`[EventManager] All successes completed! Resolving as SUCCESS.`);
-                    return this.resolveEvent(true);
+                        // Check if all successes achieved
+                        if (this.activeEvent.successCount >= requiredSuccesses) {
+                            console.log(`[EventManager] All successes completed! Resolving as SUCCESS.`);
+                            return this.resolveEvent(true);
+                        }
+
+                        // More successes needed - start delay
+                        evt.successDelayTicks = SUCCESS_DELAY_TICKS;
+                        evt.holdTime = 0; // Reset for next round
+                    }
+                } else {
+                    // Not in target - reset hold time
+                    evt.holdTime = 0;
                 }
+            } else {
+                // Quick-dash: instant on touch
+                if (isInTarget && !this.activeEvent.conditionMet) {
+                    this.activeEvent.conditionMet = true;
+                    this.activeEvent.successCount++;
+                    console.log(`[EventManager] Quick-dash success ${this.activeEvent.successCount}/${requiredSuccesses}!`);
 
-                // More successes needed - start delay to show green state
-                evt.successDelayTicks = SUCCESS_DELAY_TICKS;
-                console.log(`[EventManager] Starting success delay (${SUCCESS_DELAY_TICKS} ticks) before respawn...`);
+                    if (this.activeEvent.successCount >= requiredSuccesses) {
+                        console.log(`[EventManager] All successes completed! Resolving as SUCCESS.`);
+                        return this.resolveEvent(true);
+                    }
+
+                    const evt = this.activeEvent as any;
+                    evt.successDelayTicks = SUCCESS_DELAY_TICKS;
+                }
             }
         }
 

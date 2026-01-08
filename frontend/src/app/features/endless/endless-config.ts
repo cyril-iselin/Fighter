@@ -15,8 +15,8 @@ import type { BossEventDefinition } from './events';
 export const EVENT_GROUND_CIRCLE_EASY: BossEventDefinition = {
   id: 'ground-circle-easy',
   type: 'ground-circle',
-  hpTrigger: 75,
-  durationTicks: 540, // 9 seconds total for all 3 catches
+  hpTrigger: 65,
+  durationTicks: 500, // 7.5 seconds total for all 3 catches
   radius: 150,
   requiredSuccesses: 3,
   announcement: '🎯 STEH IM KREIS! 🎯',
@@ -36,7 +36,7 @@ export const EVENT_QUICK_DASH_EASY: BossEventDefinition = {
   id: 'quick-dash-easy',
   type: 'quick-dash',
   hpTrigger: 15, // 15% HP
-  durationTicks: 450, // 7.5 seconds total for all 3 catches
+  durationTicks: 500, // 7.5 seconds total for all 3 catches
   targetRadius: 200,
   spawnHeight: -550, // Negative Y = in the air (Y goes negative when jumping)
   requiredSuccesses: 3,
@@ -58,7 +58,7 @@ export const EVENT_GROUND_CIRCLE_HARD: BossEventDefinition = {
   id: 'ground-circle-hard',
   type: 'ground-circle',
   hpTrigger: 65,
-  durationTicks: 450, // 4 seconds total for all 3 catches
+  durationTicks: 450, 
   radius: 120,
   requiredSuccesses: 3,
   announcement: '🎯 SCHNELL IN DEN KREIS! 🎯',
@@ -79,7 +79,7 @@ export const EVENT_QUICK_DASH_HARD: BossEventDefinition = {
   id: 'quick-dash-hard',
   type: 'quick-dash',
   hpTrigger: 25,
-  durationTicks: 450, // 4.5 seconds total for all 3 catches
+  durationTicks: 450,
   targetRadius: 200,
   spawnHeight: -600, // Higher in air (more negative = higher)
   requiredSuccesses: 3,
@@ -268,7 +268,7 @@ export const PREDEFINED_LEVELS: EndlessLevelConfig[] = [
     description: 'Wer ist stärker, Du oder Du?',
     aiId: 'stickman-normal',
     bossHealth: 300,
-    bossDamageMultiplier: 1.0
+    bossDamageMultiplier: 1.0,
   },
   {
     level: 2,

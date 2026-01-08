@@ -107,71 +107,141 @@ export class BossEventRenderer {
 
     const { targetPosition, conditionMet, phase } = event;
     const { radius } = event.definition;
+    const evt = event as any;
+    const holdTime = evt.holdTime || 0;
+    const REQUIRED_HOLD_TICKS = 30;
+    const holdProgress = Math.min(holdTime / REQUIRED_HOLD_TICKS, 1);
 
     const screen = {
       x: targetPosition.x - this.cameraLeft,
       y: groundY + targetPosition.y,
     };
 
-    // Calculate progress for visual feedback
-    const progress = this.calculateProgress(event);
     const isActive = phase === 'active';
 
     // Pulsing effect
-    const pulse = Math.sin(this.pulseTime * 4) * 0.1 + 1;
-    const displayRadius = radius * pulse * (isActive ? 1 : 0.5 + progress * 0.5);
+    const pulse = Math.sin(this.pulseTime * 3) * 0.05 + 1;
+    const displayRadius = radius * pulse;
 
-    // Colors based on state
-    const baseColor = conditionMet ? 'rgba(0, 255, 100, ' : 'rgba(255, 200, 0, ';
-    const fillOpacity = isActive ? 0.3 : 0.1;
-    const strokeOpacity = isActive ? 0.9 : 0.4;
-
-    // Draw filled circle
     this.ctx.save();
+
+    // === OUTER GLOW RINGS (multiple layers) ===
+    for (let i = 3; i >= 0; i--) {
+      const glowRadius = displayRadius + i * 15;
+      const glowOpacity = 0.1 - i * 0.02;
+      const gradient = this.ctx.createRadialGradient(
+        screen.x, screen.y, displayRadius,
+        screen.x, screen.y, glowRadius
+      );
+      gradient.addColorStop(0, `rgba(57, 255, 20, ${glowOpacity})`);
+      gradient.addColorStop(1, 'rgba(57, 255, 20, 0)');
+      this.ctx.fillStyle = gradient;
+      this.ctx.beginPath();
+      this.ctx.arc(screen.x, screen.y, glowRadius, 0, Math.PI * 2);
+      this.ctx.fill();
+    }
+
+    // === INNER FILL (gradient from center) ===
+    const fillGradient = this.ctx.createRadialGradient(
+      screen.x, screen.y, 0,
+      screen.x, screen.y, displayRadius
+    );
+    if (conditionMet) {
+      fillGradient.addColorStop(0, 'rgba(57, 255, 20, 0.4)');
+      fillGradient.addColorStop(1, 'rgba(57, 255, 20, 0.1)');
+    } else {
+      fillGradient.addColorStop(0, 'rgba(255, 200, 0, 0.3)');
+      fillGradient.addColorStop(1, 'rgba(255, 200, 0, 0.05)');
+    }
+    this.ctx.fillStyle = fillGradient;
     this.ctx.beginPath();
     this.ctx.arc(screen.x, screen.y, displayRadius, 0, Math.PI * 2);
-    this.ctx.fillStyle = baseColor + fillOpacity + ')';
     this.ctx.fill();
 
-    // Draw border
-    this.ctx.strokeStyle = baseColor + strokeOpacity + ')';
-    this.ctx.lineWidth = conditionMet ? 6 : 4;
-    this.ctx.stroke();
-
-    // Draw inner ring (progress indicator)
-    if (isActive) {
-      const elapsed = event.currentTick - event.startTick;
-      const duration = event.definition.durationTicks;
-      const timeProgress = elapsed / duration;
-
+    // === HOLD PROGRESS RING (fills as player stands inside) ===
+    if (holdProgress > 0 && !conditionMet) {
       this.ctx.beginPath();
-      this.ctx.arc(screen.x, screen.y, displayRadius * 0.7, -Math.PI / 2, -Math.PI / 2 + (1 - timeProgress) * Math.PI * 2);
-      this.ctx.strokeStyle = conditionMet ? 'rgba(100, 255, 150, 0.8)' : 'rgba(255, 100, 100, 0.8)';
-      this.ctx.lineWidth = 8;
+      this.ctx.arc(screen.x, screen.y, displayRadius - 10, -Math.PI / 2, -Math.PI / 2 + holdProgress * Math.PI * 2);
+      this.ctx.strokeStyle = 'rgba(57, 255, 20, 0.9)';
+      this.ctx.lineWidth = 12;
+      this.ctx.lineCap = 'round';
+      this.ctx.shadowBlur = 15;
+      this.ctx.shadowColor = 'rgba(57, 255, 20, 0.8)';
       this.ctx.stroke();
+      this.ctx.shadowBlur = 0;
     }
 
-    // Draw success counter
+    // === OUTER BORDER (rotating dashed line) ===
+    const dashRotation = this.pulseTime * 2;
+    this.ctx.save();
+    this.ctx.translate(screen.x, screen.y);
+    this.ctx.rotate(dashRotation);
+    this.ctx.beginPath();
+    this.ctx.arc(0, 0, displayRadius, 0, Math.PI * 2);
+    this.ctx.setLineDash([15, 10]);
+    this.ctx.strokeStyle = conditionMet ? 'rgba(57, 255, 20, 0.8)' : 'rgba(255, 200, 0, 0.8)';
+    this.ctx.lineWidth = 4;
+    this.ctx.stroke();
+    this.ctx.setLineDash([]);
+    this.ctx.restore();
+
+    // === PARTICLE EFFECTS (floating upward) ===
+    if (isActive) {
+      const particleCount = conditionMet ? 12 : 6;
+      for (let i = 0; i < particleCount; i++) {
+        const angle = (i / particleCount) * Math.PI * 2 + this.pulseTime;
+        const distance = displayRadius * 0.8;
+        const particleX = screen.x + Math.cos(angle) * distance;
+        const particleY = screen.y + Math.sin(angle) * distance - (this.pulseTime * 20) % 30;
+        const particleSize = 4;
+        
+        this.ctx.fillStyle = conditionMet ? 'rgba(57, 255, 20, 0.6)' : 'rgba(255, 200, 0, 0.5)';
+        this.ctx.beginPath();
+        this.ctx.arc(particleX, particleY, particleSize, 0, Math.PI * 2);
+        this.ctx.fill();
+      }
+    }
+
+    // === SUCCESS COUNTER ===
     const requiredSuccesses = event.definition.requiredSuccesses ?? 1;
     if (requiredSuccesses > 1) {
-      this.ctx.font = 'bold 32px Arial';
+      this.ctx.font = 'bold 36px Arial';
       this.ctx.textAlign = 'center';
       this.ctx.textBaseline = 'middle';
-      this.ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
       this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
-      this.ctx.lineWidth = 4;
-      const counterText = `${event.successCount}/${requiredSuccesses}`;
-      this.ctx.strokeText(counterText, screen.x, screen.y + displayRadius + 40);
-      this.ctx.fillText(counterText, screen.x, screen.y + displayRadius + 40);
+      this.ctx.lineWidth = 5;
+      const counterText = `${event.successCount + 1}/${requiredSuccesses}`;
+      this.ctx.strokeText(counterText, screen.x, screen.y + displayRadius + 50);
+      this.ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+      this.ctx.fillText(counterText, screen.x, screen.y + displayRadius + 50);
     }
 
-    // Draw checkmark if condition met
-    if (conditionMet && isActive) {
+    // === CENTER ICON/TEXT ===
+    if (conditionMet) {
+      // Success checkmark with glow
+      this.ctx.font = 'bold 64px Arial';
+      this.ctx.textAlign = 'center';
+      this.ctx.textBaseline = 'middle';
+      this.ctx.shadowBlur = 20;
+      this.ctx.shadowColor = 'rgba(57, 255, 20, 0.9)';
+      this.ctx.fillStyle = 'rgba(57, 255, 20, 1)';
+      this.ctx.fillText('✓', screen.x, screen.y);
+      this.ctx.shadowBlur = 0;
+    } else if (holdProgress > 0) {
+      // Show hold percentage
       this.ctx.font = 'bold 48px Arial';
       this.ctx.textAlign = 'center';
       this.ctx.textBaseline = 'middle';
-      this.ctx.fillStyle = 'rgba(100, 255, 150, 0.9)';
-      this.ctx.fillText('✓', screen.x, screen.y);
+      this.ctx.fillStyle = 'rgba(57, 255, 20, 0.9)';
+      const percentage = Math.floor(holdProgress * 100);
+      this.ctx.fillText(`${percentage}%`, screen.x, screen.y);
+    } else {
+      // Arrow pointing down
+      this.ctx.font = 'bold 56px Arial';
+      this.ctx.textAlign = 'center';
+      this.ctx.textBaseline = 'middle';
+      this.ctx.fillStyle = 'rgba(255, 200, 0, 0.8)';
+      this.ctx.fillText('↓', screen.x, screen.y);
     }
 
     this.ctx.restore();
@@ -293,7 +363,7 @@ export class BossEventRenderer {
       this.ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
       this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
       this.ctx.lineWidth = 4;
-      const counterText = `${event.successCount}/${requiredSuccesses}`;
+      const counterText = `${event.successCount + 1}/${requiredSuccesses}`;
       this.ctx.strokeText(counterText, screen.x, orbY + orbRadius + 50);
       this.ctx.fillText(counterText, screen.x, orbY + orbRadius + 50);
     }
