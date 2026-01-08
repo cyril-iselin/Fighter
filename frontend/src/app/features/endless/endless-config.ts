@@ -16,7 +16,7 @@ export const EVENT_GROUND_CIRCLE_EASY: BossEventDefinition = {
   id: 'ground-circle-easy',
   type: 'ground-circle',
   hpTrigger: 65,
-  durationTicks: 500, // 7.5 seconds total for all 3 catches
+  durationTicks: 600, // 7.5 seconds total for all 3 catches
   radius: 150,
   requiredSuccesses: 3,
   announcement: '🎯 STEH IM KREIS! 🎯',
@@ -25,7 +25,7 @@ export const EVENT_GROUND_CIRCLE_EASY: BossEventDefinition = {
     specialMeter: 100,   // Full special bar
   },
   failPenalty: {
-    playerDamage: 50,
+    playerDamage: 40,
   },
 };
 
@@ -36,9 +36,9 @@ export const EVENT_QUICK_DASH_EASY: BossEventDefinition = {
   id: 'quick-dash-easy',
   type: 'quick-dash',
   hpTrigger: 15, // 15% HP
-  durationTicks: 500, // 7.5 seconds total for all 3 catches
+  durationTicks: 600, // 7.5 seconds total for all 3 catches
   targetRadius: 200,
-  spawnHeight: -550, // Negative Y = in the air (Y goes negative when jumping)
+  spawnHeight: -450, // Negative Y = in the air (Y goes negative when jumping)
   requiredSuccesses: 3,
   announcement: '⚡ SPRING IN DEN ORB! ⚡',
   successReward: {
@@ -47,7 +47,7 @@ export const EVENT_QUICK_DASH_EASY: BossEventDefinition = {
     healPlayer: 30,
   },
   failPenalty: {
-    playerDamage: 40,
+    playerDamage: 30,
   },
 };
 
@@ -58,7 +58,7 @@ export const EVENT_GROUND_CIRCLE_HARD: BossEventDefinition = {
   id: 'ground-circle-hard',
   type: 'ground-circle',
   hpTrigger: 65,
-  durationTicks: 450, 
+  durationTicks: 500, 
   radius: 120,
   requiredSuccesses: 3,
   announcement: '🎯 SCHNELL IN DEN KREIS! 🎯',
@@ -79,9 +79,9 @@ export const EVENT_QUICK_DASH_HARD: BossEventDefinition = {
   id: 'quick-dash-hard',
   type: 'quick-dash',
   hpTrigger: 25,
-  durationTicks: 450,
+  durationTicks: 500,
   targetRadius: 200,
-  spawnHeight: -600, // Higher in air (more negative = higher)
+  spawnHeight: -450, // Higher in air (more negative = higher)
   requiredSuccesses: 3,
   announcement: '⚡ SPRING IN DEN ORB! ⚡',
   successReward: {

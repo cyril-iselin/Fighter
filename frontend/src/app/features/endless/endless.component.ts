@@ -375,6 +375,9 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
       // Apply player modifiers to damage dealt
       this.processEventsWithModifiers(matchState, events);
 
+      // Pass events to SpineRenderer for combat text
+      this.spineRenderer?.handleEvents(events);
+
       this.matchState.set(matchState);
 
       // Check for fight end
