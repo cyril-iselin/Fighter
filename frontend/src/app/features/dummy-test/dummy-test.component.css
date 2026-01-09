@@ -1,0 +1,34 @@
+/* Dummy Test Component Styles */
+
+/* Checkbox styling */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  position: relative;
+}
+
+input[type="checkbox"]:checked {
+  background-color: rgb(57, 255, 20);
+  border-color: rgb(57, 255, 20);
+}
+
+input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: black;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Canvas container needs to allow pointer events through */
+#dummy-canvas {
+  pointer-events: none;
+}
+
+#spine-canvas {
+  pointer-events: none;
+}

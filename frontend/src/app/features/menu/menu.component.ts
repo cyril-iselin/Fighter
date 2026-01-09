@@ -48,4 +48,10 @@ export class MenuComponent implements OnDestroy {
     await audio.stopMusic(true);
     this.router.navigate(['/leaderboard']);
   }
+
+  async startDummyTest(): Promise<void> {
+    const audio = getAudioPlayer();
+    await audio.stopMusic(true);
+    this.router.navigate(['/dummy-test']);
+  }
 }

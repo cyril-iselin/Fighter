@@ -1,0 +1,144 @@
+<div class="relative min-h-screen bg-dark-bg overflow-hidden flex flex-col">
+  
+  <!-- Header -->
+  <header class="relative z-20 flex items-center justify-between px-6 py-4 bg-dark-card/80 backdrop-blur-sm border-b border-white/10">
+    <button 
+      (click)="goBack()"
+      class="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
+      <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      <span class="text-white/70 font-game">Zurück</span>
+    </button>
+    
+    <h1 class="text-2xl font-game font-bold text-white">Dummy Test</h1>
+    
+    <div class="w-24"></div>
+  </header>
+  
+  <!-- Main Content -->
+  <div class="flex-1 flex">
+    
+    <!-- Sidebar: Controls -->
+    <aside class="w-80 bg-dark-card/50 border-r border-white/10 p-6 flex flex-col gap-6">
+      
+      <!-- Dummy Selection -->
+      <section>
+        <h2 class="text-lg font-game font-bold text-white mb-4">Dummy auswählen</h2>
+        <div class="flex flex-col gap-2">
+          @for (dummy of availableDummies(); track dummy.id) {
+            <button
+              (click)="selectDummy(dummy.id)"
+              [class.bg-neon-green/20]="selectedDummyId() === dummy.id"
+              [class.border-neon-green]="selectedDummyId() === dummy.id"
+              class="flex items-center gap-3 px-4 py-3 rounded-lg border border-white/10 hover:border-white/30 transition-all">
+              <div class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+                <svg class="w-6 h-6 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+              </div>
+              <div class="text-left">
+                <div class="text-white font-game font-semibold">{{ dummy.name }}</div>
+                <div class="text-white/50 text-sm">HP: {{ dummy.hp }} | Speed: {{ dummy.speed }}</div>
+              </div>
+            </button>
+          }
+        </div>
+      </section>
+      
+      <!-- Display Options -->
+      <section>
+        <h2 class="text-lg font-game font-bold text-white mb-4">Anzeige</h2>
+        <div class="flex flex-col gap-3">
+          
+          <!-- Show Hitboxes -->
+          <label class="flex items-center gap-3 cursor-pointer">
+            <input 
+              type="checkbox" 
+              [checked]="showHitboxes()"
+              (change)="toggleHitboxes()"
+              class="w-5 h-5 rounded border-white/30 bg-white/10 text-neon-green focus:ring-neon-green">
+            <span class="text-white font-game">Hitboxen anzeigen</span>
+          </label>
+        </div>
+      </section>
+      
+      <!-- Selected Dummy Info -->
+      @if (selectedDummy(); as dummy) {
+        <section class="mt-auto">
+          <h2 class="text-lg font-game font-bold text-white mb-4">Info</h2>
+          <div class="bg-white/5 rounded-lg p-4">
+            <div class="grid grid-cols-2 gap-2 text-sm">
+              <div class="text-white/50">Name:</div>
+              <div class="text-white font-semibold">{{ dummy.name }}</div>
+              
+              <div class="text-white/50">HP:</div>
+              <div class="text-white">{{ dummy.hp }}</div>
+              
+              <div class="text-white/50">Speed:</div>
+              <div class="text-white">{{ dummy.speed }} px/s</div>
+              
+              <div class="text-white/50">Scale:</div>
+              <div class="text-white">{{ dummy.scale }}x</div>
+              
+              <div class="text-white/50">Hitbox:</div>
+              <div class="text-white">{{ dummy.hitbox.width }}x{{ dummy.hitbox.height }}</div>
+              
+              <div class="text-white/50">FPS:</div>
+              <div class="text-white">{{ dummy.animation.frameRate }}</div>
+            </div>
+          </div>
+        </section>
+      }
+    </aside>
+    
+    <!-- Canvas Area -->
+    <main class="flex-1 relative">
+      
+      <!-- Loading State -->
+      @if (status() === 'loading') {
+        <div class="absolute inset-0 flex items-center justify-center bg-dark-bg">
+          <div class="flex flex-col items-center gap-4">
+            <div class="w-12 h-12 border-4 border-neon-green/30 border-t-neon-green rounded-full animate-spin"></div>
+            <span class="text-white/70 font-game">Lädt...</span>
+          </div>
+        </div>
+      }
+      
+      <!-- Error State -->
+      @if (status() === 'error') {
+        <div class="absolute inset-0 flex items-center justify-center bg-dark-bg">
+          <div class="flex flex-col items-center gap-4 text-center">
+            <svg class="w-16 h-16 text-neon-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+            <span class="text-white font-game">Fehler beim Laden</span>
+            <button 
+              (click)="goBack()"
+              class="px-6 py-2 rounded-lg bg-neon-red/20 text-neon-red hover:bg-neon-red/30 transition-colors font-game">
+              Zurück zum Menü
+            </button>
+          </div>
+        </div>
+      }
+      
+      <!-- Canvas Container -->
+      <div 
+        #canvasContainer 
+        class="absolute inset-0 bg-gradient-to-b from-slate-800 to-slate-900">
+        <!-- Ground line indicator -->
+        <div class="absolute bottom-[23%] left-0 right-0 h-px bg-white/20"></div>
+      </div>
+      
+      <!-- Legend -->
+      <div class="absolute bottom-4 right-4 bg-dark-card/80 backdrop-blur-sm rounded-lg p-4 border border-white/10">
+        <div class="flex items-center gap-4 text-sm">
+          <div class="flex items-center gap-2">
+            <div class="w-4 h-4 border-2 border-red-500 bg-red-500/20"></div>
+            <span class="text-white/70">Dummy Hitbox</span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

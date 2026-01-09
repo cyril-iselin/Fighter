@@ -191,6 +191,50 @@
         </div>
       </button>
 
+        <!-- Dummy Test Button -->
+      <button 
+        (click)="startDummyTest()"
+        class="group relative overflow-hidden rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+        
+        <!-- Animated Border Gradient -->
+        <div class="absolute -inset-[1px] bg-gradient-to-r from-orange-500 via-red-500 to-orange-500 rounded-2xl opacity-70 group-hover:opacity-100 transition-opacity"
+          style="background-size: 200% 100%; animation: gradient-shift 3s linear infinite;">
+        </div>
+        
+        <!-- Button Background -->
+        <div class="absolute inset-[1px] bg-gradient-to-r from-dark-card via-dark-bg to-dark-card rounded-2xl"></div>
+        
+        <!-- Hover Glow -->
+        <div class="absolute inset-0 bg-gradient-to-r from-orange-500/0 via-orange-500/10 to-orange-500/0 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
+        
+        <!-- Content -->
+        <div class="relative px-8 py-6 flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-xl bg-orange-500/10 flex items-center justify-center group-hover:bg-orange-500/20 transition-colors">
+              <svg class="w-7 h-7 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div class="text-left">
+              <h3 class="text-xl font-game font-bold text-white group-hover:text-orange-400 transition-colors">Dummies</h3>
+              <p class="text-sm text-white/50 group-hover:text-white/70 transition-colors">Hitbox Tester</p>
+            </div>
+          </div>
+          
+          <!-- Arrow -->
+          <div class="w-10 h-10 rounded-full bg-orange-500/10 flex items-center justify-center group-hover:bg-orange-500 group-hover:text-dark-bg transition-all">
+            <svg class="w-5 h-5 text-orange-400 group-hover:text-dark-bg transition-colors transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </div>
+        
+        <!-- Shine Effect -->
+        <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+          <div class="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+        </div>
+      </button>
+
       <!-- Leaderboard Button -->
       <button 
         (click)="showLeaderboard()"
@@ -234,6 +278,7 @@
           <div class="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
         </div>
       </button>
+
     </div>
   </div>
 

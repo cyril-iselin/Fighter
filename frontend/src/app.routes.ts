@@ -22,6 +22,10 @@ export const routes: Routes = [
     loadComponent: () => import('./app/features/leaderboard/leaderboard.component').then(m => m.LeaderboardComponent)
   },
   {
+    path: 'dummy-test',
+    loadComponent: () => import('./app/features/dummy-test/dummy-test.component').then(m => m.DummyTestComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }
