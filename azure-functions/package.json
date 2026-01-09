@@ -12,8 +12,8 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
-    "@azure/data-tables": "^12.3.0",
-    "@azure/functions": "^3.5.1"
+    "@azure/data-tables": "13.2.2",
+    "@azure/functions": "3.5.1"
   },
   "devDependencies": {
     "@types/node": "^18.19.0",
