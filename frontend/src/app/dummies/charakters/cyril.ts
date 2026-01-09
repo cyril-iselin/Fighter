@@ -1,5 +1,5 @@
 // ============================================================================
-// VLADI DUMMY DEFINITION
+// CYRIL DUMMY DEFINITION
 // ============================================================================
 // Walking character for hitbox testing
 // ============================================================================
@@ -7,29 +7,29 @@
 import { registerDummy, type DummyDefinition } from '../dummy-registry';
 
 /**
- * Vladi dummy configuration
+ * Cyril dummy configuration
  */
-export const VLADI_DUMMY: DummyDefinition = {
-  id: 'vladi',
-  name: 'Vladi',
+export const CYRIL_DUMMY: DummyDefinition = {
+  id: 'cyril',
+  name: 'Cyril',
   
   // Asset paths
-  spritesheetPath: 'assets/dummies/vladi/texture.png',
-  atlasPath: 'assets/dummies/vladi/texture.json',
+  spritesheetPath: 'assets/dummies/cyril/texture.png',
+  atlasPath: 'assets/dummies/cyril/texture.json',
   
   // Visual properties
   scale: 1.5,  // Scale up for visibility
   
   // Gameplay properties
-  speed: 120,  // Pixels per second (etwas langsamer)
-  hp: 150,
+  speed: 130,  // Pixels per second
+  hp: 120,
   
   // Hitbox (matches sprite size roughly)
   hitbox: {
     width: 80,
-    height: 220,
+    height: 225,
     offsetX: 0,
-    offsetY: 12
+    offsetY: 10
   },
   
   // Animation
@@ -39,8 +39,8 @@ export const VLADI_DUMMY: DummyDefinition = {
 };
 
 /**
- * Register Vladi dummy
+ * Register Cyril dummy
  */
-export function registerVladi(): void {
-  registerDummy(VLADI_DUMMY);
+export function registerCyril(): void {
+  registerDummy(CYRIL_DUMMY);
 }
