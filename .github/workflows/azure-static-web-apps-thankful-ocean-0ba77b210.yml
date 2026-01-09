@@ -16,21 +16,14 @@ jobs:
         with:
           node-version: "20.19.0"
 
-      # Frontend build
+      # Build Frontend (Angular 21 braucht Node >= 20.19)
       - name: Install & build frontend
         working-directory: frontend
         run: |
           npm ci
           npm run build
 
-      # Functions build (TypeScript -> dist)
-      - name: Install & build functions
-        working-directory: azure-functions
-        run: |
-          npm ci
-          npm run build
-
-      # Deploy (skip Oryx builds)
+      # Deploy: Frontend upload aus dist, API wird im Quellordner gebaut
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
@@ -38,12 +31,12 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
 
+          # Wir laden das fertig gebaute Frontend hoch
           skip_app_build: true
-          skip_api_build: true
-
-          # app_location points to *built* static files when skip_app_build=true
           app_location: "frontend/dist/fighter/browser"
           output_location: ""
 
-          # api_location points to compiled JS output for TS functions
-          api_location: "azure-functions/dist"
+          # API: nicht skippen -> SWA erkennt Sprache über package.json und baut TS
+          skip_api_build: false
+          api_location: "azure-functions"
+          api_build_command: "npm ci && npm run build"
