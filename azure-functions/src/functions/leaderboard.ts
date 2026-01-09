@@ -121,35 +121,86 @@ async function handlePost(request: HttpRequest, context: InvocationContext): Pro
     }
 
     const tableClient = getTableClient();
+    const playerName = body.playerName.substring(0, 50);
 
     // Calculate score: Level * 1000 + Damage / 10
     const damageDealt = body.damageDealt || 0;
-    const score = body.level * 1000 + Math.floor(damageDealt / 10);
+    const newScore = body.level * 1000 + Math.floor(damageDealt / 10);
     const bonusPoints = Math.floor(damageDealt / 10);
 
-    // Generate unique ID
-    const id = randomUUID();
+    // Check if player already has an entry
+    let existingEntity: HighscoreEntity | null = null;
+    const queryFilter = `PartitionKey eq 'highscore' and playerName eq '${playerName.replace(/'/g, "''")}'`;
+    
+    for await (const entity of tableClient.listEntities<HighscoreEntity>({ queryOptions: { filter: queryFilter } })) {
+      existingEntity = entity;
+      break; // Only need the first match
+    }
 
-    // Create entity with unified schema
+    let entityId: string;
+    let shouldUpdate = false;
+
+    if (existingEntity) {
+      // Player exists - only update if new score is higher
+      if (newScore > existingEntity.score) {
+        entityId = existingEntity.rowKey;
+        shouldUpdate = true;
+        context.log(`Updating existing player ${playerName}: ${existingEntity.score} -> ${newScore}`);
+      } else {
+        // New score is not higher - don't save, just return current rank
+        context.log(`Player ${playerName} score ${newScore} not higher than existing ${existingEntity.score}`);
+        
+        // Calculate rank for existing score
+        let rank = 1;
+        const allEntitiesFilter = `PartitionKey eq 'highscore'`;
+        for await (const e of tableClient.listEntities<HighscoreEntity>({ queryOptions: { filter: allEntitiesFilter } })) {
+          if (e.score > existingEntity.score) {
+            rank++;
+          }
+        }
+
+        return {
+          status: 200,
+          headers: getCorsHeaders(),
+          body: JSON.stringify({
+            rank: rank,
+            score: existingEntity.score,
+            isNewHighScore: false,
+            message: 'Score not improved'
+          })
+        };
+      }
+    } else {
+      // New player - create new entry
+      entityId = randomUUID();
+      context.log(`Creating new entry for player ${playerName}`);
+    }
+
+    // Create/update entity
     const entity: HighscoreEntity = {
       partitionKey: 'highscore',
-      rowKey: id,
-      playerName: body.playerName.substring(0, 50),
-      score: score,
+      rowKey: entityId,
+      playerName: playerName,
+      score: newScore,
       level: body.level,
       bonusPoints: bonusPoints,
       damageDealt: damageDealt,
       createdUtc: new Date().toISOString()
     };
 
-    // Insert into table
-    await tableClient.createEntity(entity);
+    if (shouldUpdate) {
+      // Update existing entity
+      await tableClient.updateEntity(entity, 'Replace');
+    } else {
+      // Create new entity
+      await tableClient.createEntity(entity);
+    }
 
     // Calculate rank (count entries with higher score)
     let rank = 1;
-    const queryFilter = `PartitionKey eq 'highscore'`;
-    for await (const e of tableClient.listEntities<HighscoreEntity>({ queryOptions: { filter: queryFilter } })) {
-      if (e.score > score) {
+    const allEntitiesFilter = `PartitionKey eq 'highscore'`;
+    for await (const e of tableClient.listEntities<HighscoreEntity>({ queryOptions: { filter: allEntitiesFilter } })) {
+      if (e.score > newScore) {
         rank++;
       }
     }
@@ -162,7 +213,7 @@ async function handlePost(request: HttpRequest, context: InvocationContext): Pro
       headers: getCorsHeaders(),
       body: JSON.stringify({
         rank: rank,
-        score: score,
+        score: newScore,
         isNewHighScore: isNewHighScore
       })
     };

@@ -101,10 +101,10 @@ export const EVENT_DUMMY_WAVE_EASY: BossEventDefinition = {
   id: 'dummy-wave-easy',
   type: 'dummy-wave',
   hpTrigger: 50,
-  durationTicks: 900, // 15 seconds total
-  dummyIds: ['donald', 'vladi'], // Pool of dummy types
+  durationTicks: 1020, // 17 seconds total
+  dummyIds: ['donald', 'vladi', 'adolf'], // Pool of dummy types
   totalDummies: 3,
-  spawnDelayTicks: 60, // 1 second delay between spawns
+  spawnDelayTicks: 120, // 2 second delay between spawns
   announcement: '👊 BESIEGE DIE DUMMIES! 👊',
   successReward: {
     bossStunTicks: 180,  // 3 seconds stun
@@ -122,10 +122,10 @@ export const EVENT_DUMMY_WAVE_HARD: BossEventDefinition = {
   id: 'dummy-wave-hard',
   type: 'dummy-wave',
   hpTrigger: 10,
-  durationTicks: 800, // 14 seconds total
+  durationTicks: 900, // 15 seconds total
   dummyIds: ['donald', 'vladi', 'adolf'], // Mixed dummy types
   totalDummies: 5,
-  spawnDelayTicks: 30, // 0.5 second delay between spawns
+  spawnDelayTicks: 45, // 0.75 second delay between spawns
   announcement: '👊 SCHNELL! BESIEGE ALLE DUMMIES! 👊',
   successReward: {
     bossStunTicks: 300,  // 5 seconds stun

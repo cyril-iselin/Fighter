@@ -28,13 +28,13 @@ export const STICKMAN_AI_PROFILE: CharacterAIProfile = createProfile({
         // Normale Angriffe (weight = relative Wahrscheinlichkeit)
         // cooldownTicks = Ticks bis dieser Angriff erneut gewählt werden kann
         attacks: [
-            { command: 'light', weight: 60, cooldownTicks: 30 },  // 60% Light Attack, ~0.5s Cooldown
-            { command: 'heavy', weight: 40, cooldownTicks: 60 },  // 40% Heavy Attack, ~1s Cooldown
+            { command: 'light', weight: 60, cooldownTicks: 50 },  // 60% Light Attack, ~0.5s Cooldown
+            { command: 'heavy', weight: 40, cooldownTicks: 80 },  // 40% Heavy Attack, ~1s Cooldown
         ],
         // Telegraph-Angriffe (wenn AI einen Angriff "ankündigt")
         telegraphAttacks: [
-            { command: 'heavy', weight: 80, cooldownTicks: 60 },  // Meist Heavy bei Telegraph
-            { command: 'light', weight: 20, cooldownTicks: 30 },
+            { command: 'heavy', weight: 80, cooldownTicks: 50 },  // Meist Heavy bei Telegraph
+            { command: 'light', weight: 20, cooldownTicks: 50 },
         ],
     },
 
