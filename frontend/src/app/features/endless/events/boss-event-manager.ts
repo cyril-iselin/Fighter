@@ -12,6 +12,7 @@ import type {
     BossEventCallbacks,
 } from './boss-event.types';
 import { PHYSICS, TICK_RATE } from '../../../core/config';
+import { getDummy } from '../../../dummies/dummy-registry';
 
 /** Delay after success before spawning next target (so green state is visible) */
 const SUCCESS_DELAY_TICKS = Math.floor(TICK_RATE * 0.5); // 0.5 seconds
@@ -65,12 +66,31 @@ export class BossEventManager {
      * @param bossHp Current boss HP
      * @param bossMaxHp Boss maximum HP
      * @param playerX Player's X position
+     * @param playerY Player's Y position
      * @param bossX Boss's X position
      * @param currentTick Current game tick
+     * @param cameraLeft Camera left position for rendering
+     * @param groundY Ground Y position for rendering
+     * @param playerAttacking Is player currently in attack state? (for dummy-wave)
+     * @param playerFacingRight Is player facing right? (for dummy-wave)
+     * @param playerHitbox Player's hitbox for collision (for dummy-wave)
+     * @param currentDummyX Current dummy X position from renderer (for dummy-wave)
      * @returns Event result if an event just ended, null otherwise
      */
     tick(
-        bossHp: number, bossMaxHp: number, playerX: number, playerY: number, bossX: number, currentTick: number, cameraLeft: number, groundY: number): BossEventResult | null {
+        bossHp: number,
+        bossMaxHp: number,
+        playerX: number,
+        playerY: number,
+        bossX: number,
+        currentTick: number,
+        cameraLeft: number,
+        groundY: number,
+        playerAttacking?: boolean,
+        playerFacingRight?: boolean,
+        playerHitbox?: { x: number; y: number; width: number; height: number },
+        currentDummyX?: number
+    ): BossEventResult | null {
         const bossHpPercent = (bossHp / bossMaxHp) * 100;
 
         // If no active event, check if we should trigger one
@@ -80,7 +100,17 @@ export class BossEventManager {
         }
 
         // Update active event
-        return this.updateActiveEvent(playerX, playerY, currentTick, cameraLeft, groundY);
+        return this.updateActiveEvent(
+            playerX,
+            playerY,
+            currentTick,
+            cameraLeft,
+            groundY,
+            playerAttacking,
+            playerFacingRight,
+            playerHitbox,
+            currentDummyX
+        );
     }
 
     /**
@@ -130,9 +160,21 @@ export class BossEventManager {
             targetPosition,
             conditionMet: false,
             successCount: 0,
+            phase: 'active',
             successDelayTicks: 0, // Countdown after success before respawn
             holdTime: 0, // Ticks spent inside target (for ground-circle)
         } as any;
+
+        // Initialize dummy-wave specific state
+        if (definition.type === 'dummy-wave') {
+            const evt = activeEvent as any;
+            evt.dummyKilledCount = 0;
+            evt.spawnDelayCounter = 0;
+
+            // Spawn first dummy (groundY will be passed from tick)
+            // Note: groundY is not available here yet, will be set by callback
+            this.spawnDummy(activeEvent, targetPosition.x, 0);
+        }
 
         this.activeEvent = activeEvent;
 
@@ -140,6 +182,130 @@ export class BossEventManager {
         this.callbacks.onEventStart?.(activeEvent);
 
         console.log(`[BossEventManager] Event triggered: ${definition.type} at ${definition.hpTrigger}% HP`);
+    }
+
+    /**
+     * Spawn a dummy for dummy-wave event
+     */
+    private spawnDummy(event: ActiveBossEvent, x: number, groundY: number): void {
+        const def = event.definition;
+        if (def.type !== 'dummy-wave') return;
+
+        // Select random dummy from pool
+        const dummyId = def.dummyIds[Math.floor(Math.random() * def.dummyIds.length)];
+
+        // Determine facing direction (face towards center)
+        const arenaCenter = (PHYSICS.minX + PHYSICS.maxX) / 2;
+        const facing = x < arenaCenter ? 1 : -1;
+
+        // Create dummy state (HP will be set from dummy definition by callback)
+        const evt = event as any;
+        evt.currentDummy = {
+            dummyId,
+            x,
+            y: groundY, // Spawn at stage-specific ground level
+            facing,
+            hp: 100, // Default, callback should update this
+            maxHp: 100,
+            alive: true,
+            deathAnimationTicks: 0
+        };
+
+        // Request spawn via callback
+        this.callbacks.onDummySpawnRequest?.(dummyId, x, groundY, facing);
+
+        console.log(`[BossEventManager] Spawned dummy: ${dummyId} at x=${x.toFixed(0)}`);
+    }
+
+    /**
+     * Update dummy-wave event logic
+     */
+    private updateDummyWaveEvent(
+        playerX: number,
+        playerY: number,
+        cameraLeft: number,
+        groundY: number,
+        playerAttacking?: boolean,
+        playerFacingRight?: boolean,
+        playerHitbox?: { x: number; y: number; width: number; height: number },
+        elapsed?: number,
+        currentDummyX?: number
+    ): BossEventResult | null {
+        if (!this.activeEvent) return null;
+        const def = this.activeEvent.definition;
+        if (def.type !== 'dummy-wave') return null;
+
+        const evt = this.activeEvent as any;
+        const dummy = evt.currentDummy;
+
+        // Handle spawn delay counter
+        if (evt.spawnDelayCounter > 0) {
+            evt.spawnDelayCounter--;
+
+            // Spawn next dummy when delay expires (only if no current dummy)
+            if (evt.spawnDelayCounter === 0 && evt.dummyKilledCount < def.totalDummies && !evt.currentDummy) {
+                const newPosition = this.calculateTargetPosition(def, evt.currentDummy?.x);
+                // groundY is passed from updateDummyWaveEvent
+                this.spawnDummy(this.activeEvent, newPosition.x, groundY);
+            }
+        }
+
+        // Handle death animation
+        if (dummy && !dummy.alive && dummy.deathAnimationTicks > 0) {
+            dummy.deathAnimationTicks--;
+
+            // Animation complete - check victory or spawn next
+            if (dummy.deathAnimationTicks === 0) {
+                // Notify that animation is complete (so renderer can cleanup)
+                this.callbacks.onDummyAnimationComplete?.();
+
+                evt.currentDummy = null;
+
+                // Check if all dummies defeated
+                if (evt.dummyKilledCount >= def.totalDummies) {
+                    console.log(`[EventManager] All dummies defeated! Resolving as SUCCESS.`);
+                    return this.resolveEvent(true);
+                }
+
+                // Start spawn delay for next dummy
+                evt.spawnDelayCounter = def.spawnDelayTicks;
+            }
+        }
+
+        // Check for hit on dummy
+        if (dummy && dummy.alive) {
+            const isHit = this.checkCondition(
+                playerX,
+                playerY,
+                cameraLeft,
+                groundY,
+                playerAttacking,
+                playerFacingRight,
+                playerHitbox,
+                currentDummyX
+            );
+
+            if (isHit) {
+                // Kill dummy
+                dummy.alive = false;
+                dummy.deathAnimationTicks = 25; // ~0.4s animation
+                evt.dummyKilledCount++;
+
+                console.log(`[EventManager] Dummy killed! ${evt.dummyKilledCount}/${def.totalDummies}`);
+
+                // Notify callback
+                this.callbacks.onDummyDeath?.(dummy.dummyId, dummy.x, dummy.y);
+            }
+        }
+
+        // Check if time ran out
+        if (elapsed !== undefined && elapsed >= def.durationTicks) {
+            console.log(`[EventManager] Time ran out! Resolving as FAIL.`);
+            return this.resolveEvent(false);
+        }
+
+        this.callbacks.onEventTick?.(this.activeEvent);
+        return null;
     }
 
     /**
@@ -197,6 +363,29 @@ export class BossEventManager {
                 const height = baseHeight + Math.random() * 100;
                 return { x: targetX, y: height };
             }
+
+            case 'dummy-wave': {
+                let targetX: number;
+
+                // Try to spawn away from previous position
+                if (previousX !== undefined) {
+                    // Spawn on opposite side or far away
+                    const arenaCenter = (PHYSICS.minX + PHYSICS.maxX) / 2;
+                    const isLeftSide = previousX < arenaCenter;
+                    const preferredSide = isLeftSide ? 1 : -1; // Opposite side
+
+                    const sideMin = preferredSide > 0 ? arenaCenter : PHYSICS.minX;
+                    const sideMax = preferredSide > 0 ? PHYSICS.maxX : arenaCenter;
+
+                    targetX = sideMin + Math.random() * (sideMax - sideMin);
+                } else {
+                    // First spawn - anywhere in arena
+                    targetX = PHYSICS.minX + Math.random() * (PHYSICS.maxX - PHYSICS.minX);
+                }
+
+                // Dummies spawn on ground
+                return { x: targetX, y: 0 };
+            }
         }
     }
 
@@ -204,7 +393,16 @@ export class BossEventManager {
      * Update active event state
      */
     private updateActiveEvent(
-        playerX: number, playerY: number, currentTick: number, cameraLeft: number, groundY: number): BossEventResult | null {
+        playerX: number,
+        playerY: number,
+        currentTick: number,
+        cameraLeft: number,
+        groundY: number,
+        playerAttacking?: boolean,
+        playerFacingRight?: boolean,
+        playerHitbox?: { x: number; y: number; width: number; height: number },
+        currentDummyX?: number
+    ): BossEventResult | null {
         if (!this.activeEvent) return null;
 
         this.activeEvent.currentTick = currentTick;
@@ -213,6 +411,11 @@ export class BossEventManager {
 
         const requiredSuccesses = def.requiredSuccesses ?? 1;
         const evt = this.activeEvent as any;
+
+        // Handle dummy-wave specific logic
+        if (def.type === 'dummy-wave') {
+            return this.updateDummyWaveEvent(playerX, playerY, cameraLeft, groundY, playerAttacking, playerFacingRight, playerHitbox, elapsed, currentDummyX);
+        }
 
         // If in success delay countdown, decrement and skip condition check
         if (evt.successDelayTicks > 0) {
@@ -230,7 +433,7 @@ export class BossEventManager {
             }
         } else {
             // Normal condition checking - not in delay
-            const isInTarget = this.checkCondition(playerX, playerY, cameraLeft, groundY);
+            const isInTarget = this.checkCondition(playerX, playerY, cameraLeft, groundY, playerAttacking, playerFacingRight, playerHitbox);
 
             // Ground circle: requires holding for time
             if (def.type === 'ground-circle') {
@@ -239,7 +442,7 @@ export class BossEventManager {
 
                 if (isInTarget) {
                     evt.holdTime = (evt.holdTime || 0) + 1;
-                    
+
                     // Check if held long enough
                     if (evt.holdTime >= REQUIRED_HOLD_TICKS && !this.activeEvent.conditionMet) {
                         this.activeEvent.conditionMet = true;
@@ -296,7 +499,11 @@ export class BossEventManager {
         playerX: number,
         playerY: number,
         cameraLeft: number,
-        groundY: number
+        groundY: number,
+        playerAttacking?: boolean,
+        playerFacingRight?: boolean,
+        playerHitbox?: { x: number; y: number; width: number; height: number },
+        currentDummyX?: number
     ): boolean {
         if (!this.activeEvent) return false;
         const { definition, targetPosition } = this.activeEvent;
@@ -327,6 +534,27 @@ export class BossEventManager {
                 const dyBiased = dy + yBias;
 
                 return (dx * dx + dyBiased * dyBiased) <= (r * r);
+            }
+
+            case 'dummy-wave': {
+                if (!playerAttacking) return false;
+                if (!playerHitbox) return false;
+                if (currentDummyX === undefined) return false;
+
+                const hitPaddingX = 60;
+                const dummyW = 120 + hitPaddingX * 2;
+                const dummyH = 250;
+
+                const dummyX = currentDummyX - dummyW / 2;
+                const dummyY = groundY - dummyH; // Dummy steht am Boden
+
+                const overlap =
+                    playerHitbox.x < dummyX + dummyW &&
+                    playerHitbox.x + playerHitbox.width > dummyX &&
+                    playerHitbox.y < dummyY + dummyH &&
+                    playerHitbox.y + playerHitbox.height > dummyY;
+                    
+                return overlap;
             }
         }
     }

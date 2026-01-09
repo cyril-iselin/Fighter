@@ -115,7 +115,7 @@ export class DummyTestComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dummyRenderer.clearInstances();
     
     // Spawn at left side, moving right
-    this.activeDummy = this.dummyRenderer.spawnDummy(dummyId, 200, 0, 1);
+    this.activeDummy = this.dummyRenderer.spawnDummy(dummyId, 0, 0, 1);
   }
   
   async selectDummy(dummyId: string): Promise<void> {

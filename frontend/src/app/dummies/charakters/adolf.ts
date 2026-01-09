@@ -18,7 +18,7 @@ export const ADOLF_DUMMY: DummyDefinition = {
   atlasPath: 'assets/dummies/adolf/texture.json',
   
   // Visual properties
-  scale: 0.8,  // Scale up for visibility
+  scale: 1.2,  // Scale up for visibility
   flipX: true, // Sprite is mirrored, flip horizontally
   
   // Gameplay properties

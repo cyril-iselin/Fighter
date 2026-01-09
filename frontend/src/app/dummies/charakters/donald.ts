@@ -18,7 +18,7 @@ export const DONALD_DUMMY: DummyDefinition = {
   atlasPath: 'assets/dummies/donald/texture.json',
   
   // Visual properties
-  scale: 1.5,  // Scale up for visibility
+  scale: 2.2,  // Scale up for visibility
   
   // Gameplay properties
   speed: 130,  // Pixels per second

@@ -171,7 +171,6 @@ export class CombatTextRenderer {
       age: 0,
     };
     
-    console.log('[CombatText] Spawned text:', newText, 'Total texts:', this.texts.length + 1);
     this.texts.push(newText);
   }
 
@@ -195,10 +194,7 @@ export class CombatTextRenderer {
    * Render all active combat texts
    */
   render(): void {
-    if (this.texts.length > 0) {
-      console.log('[CombatText] Rendering', this.texts.length, 'texts');
-    }
-    
+
     const ctx = this.ctx;
     
     for (const text of this.texts) {

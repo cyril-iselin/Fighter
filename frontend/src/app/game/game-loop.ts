@@ -482,6 +482,11 @@ export class GameLoop {
    * Bone-driven hit detection with death and stun checks
    */
   private performHitDetection(): void {
+    // Skip hit detection if boss interaction is disabled (e.g., during events)
+    if (!this.bossInteractionEnabled) {
+      return;
+    }
+    
     const bones0 = this.spineRenderer.sampleBones(0, this.matchState.tick);
     const bones1 = this.spineRenderer.sampleBones(1, this.matchState.tick);
     const [f0, f1] = this.matchState.fighters;

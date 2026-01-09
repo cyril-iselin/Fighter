@@ -4,5 +4,5 @@
 
 export const environment = {
   production: true,
-  apiUrl: 'https://fighter-functions.azurewebsites.net/api'  // Azure Functions deployed
+  apiUrl: 'https://fighter.cluyo.ch/api'  // Azure Functions deployed
 };

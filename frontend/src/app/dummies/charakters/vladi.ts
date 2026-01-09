@@ -18,7 +18,7 @@ export const VLADI_DUMMY: DummyDefinition = {
   atlasPath: 'assets/dummies/vladi/texture.json',
   
   // Visual properties
-  scale: 1.5,  // Scale up for visibility
+  scale: 2.2,  // Scale up for visibility
   
   // Gameplay properties
   speed: 110,  // Pixels per second (etwas langsamer)

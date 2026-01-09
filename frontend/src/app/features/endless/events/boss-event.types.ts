@@ -59,9 +59,27 @@ export interface QuickDashEvent extends BossEventBase {
 }
 
 /**
+ * Dummy Wave Event
+ * Sequential waves of dummy enemies spawn - player must defeat them all before time runs out
+ * Dummies are defeated by attacking them
+ */
+export interface DummyWaveEvent extends BossEventBase {
+  type: 'dummy-wave';
+  
+  /** IDs of dummy types to spawn (selected randomly from this pool) */
+  dummyIds: string[];
+  
+  /** Total number of dummies to spawn in sequence */
+  totalDummies: number;
+  
+  /** Ticks to wait after dummy death before spawning next one */
+  spawnDelayTicks: number;
+}
+
+/**
  * Union type of all boss events
  */
-export type BossEventDefinition = GroundCircleEvent | QuickDashEvent;
+export type BossEventDefinition = GroundCircleEvent | QuickDashEvent | DummyWaveEvent;
 
 /**
  * Reward given when player successfully completes an event
@@ -121,6 +139,44 @@ export interface ActiveBossEvent {
   
   /** Current phase of the event */
   phase: 'intro' | 'active' | 'resolving';
+  
+  /** Dummy wave specific state (only for dummy-wave events) */
+  currentDummy?: DummyEventState;
+  
+  /** Number of dummies killed (only for dummy-wave events) */
+  dummyKilledCount?: number;
+  
+  /** Ticks remaining before spawning next dummy (only for dummy-wave events) */
+  spawnDelayCounter?: number;
+}
+
+/**
+ * State for a single dummy in a dummy wave event
+ */
+export interface DummyEventState {
+  /** Dummy ID for rendering */
+  dummyId: string;
+  
+  /** World X position */
+  x: number;
+  
+  /** World Y position (relative to ground) */
+  y: number;
+  
+  /** Facing direction (1 = right, -1 = left) */
+  facing: number;
+  
+  /** Current HP */
+  hp: number;
+  
+  /** Maximum HP */
+  maxHp: number;
+  
+  /** Is dummy still alive? */
+  alive: boolean;
+  
+  /** Death animation ticks remaining (0 = animation complete) */
+  deathAnimationTicks: number;
 }
 
 /**
@@ -145,4 +201,13 @@ export interface BossEventCallbacks {
   
   /** Called when an event ends (success or fail) */
   onEventEnd?: (result: BossEventResult) => void;
+  
+  /** Called when a dummy needs to be spawned (dummy-wave only) */
+  onDummySpawnRequest?: (dummyId: string, x: number, y: number, facing: number) => void;
+  
+  /** Called when a dummy dies (dummy-wave only) */
+  onDummyDeath?: (dummyId: string, x: number, y: number) => void;
+  
+  /** Called when dummy death animation completes (dummy-wave only) */
+  onDummyAnimationComplete?: () => void;
 }

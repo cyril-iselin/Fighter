@@ -5,6 +5,9 @@
 // Renders animated dummies with hitbox visualization
 // ============================================================================
 
+import { GROUND_Y } from '../adapters/spine-bone-transform';
+import { SpineRenderer } from '../adapters/spine-renderer';
+import { PHYSICS } from '../core/config';
 import type { 
   DummyDefinition, 
   AtlasData, 
@@ -65,6 +68,10 @@ export class DummyRenderer {
   private readonly DESIGN_WIDTH = 1920;
   private readonly DESIGN_HEIGHT = 1080;
   private readonly GROUND_Y = 250;  // Y position of ground from bottom
+  
+  // Arena bounds (for bounce behavior during events)
+  private arenaBoundsEnabled = false;
+  private arenaBounds = { minX: -500, maxX: 500 }; // Default bounds
   
   // Debug options
   private showHitboxes = true;
@@ -151,6 +158,7 @@ export class DummyRenderer {
     };
     
     this.instances.push(instance);
+    console.log('[DummyRenderer] Spawned instance, total count:', this.instances.length, 'id:', instance.id);
     return instance;
   }
   
@@ -165,10 +173,13 @@ export class DummyRenderer {
   }
   
   /**
-   * Clear all instances
+   * Clear all instances and canvas
    */
   clearInstances(): void {
+    console.log('[DummyRenderer] Clearing instances, count:', this.instances.length);
     this.instances = [];
+    // Clear canvas immediately to remove any rendered dummies
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
   
   /**
@@ -222,12 +233,23 @@ export class DummyRenderer {
     if (instance.isMoving) {
       instance.x += definition.speed * instance.facing * deltaTime;
       
-      // Wrap around screen
-      const margin = 100;
-      if (instance.x > this.DESIGN_WIDTH + margin) {
-        instance.x = -margin;
-      } else if (instance.x < -margin) {
-        instance.x = this.DESIGN_WIDTH + margin;
+      if (this.arenaBoundsEnabled) {
+        // Bounce at arena bounds (for events)
+        if (instance.x > this.arenaBounds.maxX) {
+          instance.x = this.arenaBounds.maxX;
+          instance.facing = -1; // Flip to face left
+        } else if (instance.x < this.arenaBounds.minX) {
+          instance.x = this.arenaBounds.minX;
+          instance.facing = 1; // Flip to face right
+        }
+      } else {
+        // Wrap around screen (for test mode)
+        const margin = 100;
+        if (instance.x > this.DESIGN_WIDTH + margin) {
+          instance.x = -margin;
+        } else if (instance.x < -margin) {
+          instance.x = this.DESIGN_WIDTH + margin;
+        }
       }
     }
   }
@@ -242,11 +264,30 @@ export class DummyRenderer {
   setShowHitboxes(show: boolean): void {
     this.showHitboxes = show;
   }
+
+  /**
+   * Enable arena bounds (for bounce behavior during events)
+   */
+  setArenaBounds(enabled: boolean, minX?: number, maxX?: number): void {
+    this.arenaBoundsEnabled = enabled;
+    if (minX !== undefined && maxX !== undefined) {
+      this.arenaBounds = { minX, maxX };
+    }
+  }
   
   /**
    * Render all dummy instances
+   * @param cameraLeft Optional camera left position for world-to-screen conversion
    */
-  render(): void {
+  render(cameraLeft: number = 0): void {
+    // Always clear canvas first (even if no instances, to remove old pixels)
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    // If no instances, nothing to render
+    if (this.instances.length === 0) {
+      return;
+    }
+
     // Get actual canvas size
     const canvasWidth = this.canvas.width;
     const canvasHeight = this.canvas.height;
@@ -267,9 +308,9 @@ export class DummyRenderer {
     this.ctx.translate(offsetX, offsetY);
     this.ctx.scale(scale, scale);
     
-    // Render each instance
+    // Render each instance with camera offset
     for (const instance of this.instances) {
-      this.renderInstance(instance);
+      this.renderInstance(instance, cameraLeft);
     }
     
     // Restore context
@@ -280,7 +321,7 @@ export class DummyRenderer {
    * Render a single dummy instance
    * NOTE: Rotation is NOT supported - export spritesheets with "Allow rotation = OFF"
    */
-  private renderInstance(instance: DummyInstance): void {
+  private renderInstance(instance: DummyInstance, cameraLeft: number = 0): void {
     const assets = this.assetsCache.get(instance.definition.id);
     if (!assets) return;
     
@@ -291,17 +332,19 @@ export class DummyRenderer {
     const { frame: atlasFrame } = frameData;
     const { spriteSourceSize, sourceSize } = atlasFrame;
     
-    // Calculate ground position (from bottom)
-    const groundY = this.DESIGN_HEIGHT - this.GROUND_Y;
-    
     // Apply scale
     const renderScale = definition.scale;
     const scaledWidth = sourceSize.w * renderScale;
     const scaledHeight = sourceSize.h * renderScale;
     
-    // Position (x is center, y is bottom)
-    const renderX = instance.x - scaledWidth / 2;
-    const renderY = groundY - scaledHeight;
+    // Convert Spine world Y to canvas Y (Y+ is down in canvas, up in Spine)
+    const groundLineY = this.DESIGN_HEIGHT - GROUND_Y; // z.B. 830
+    const canvasY = groundLineY + instance.y;;
+    
+    // Position (x is center, y is bottom) - convert from world to screen coordinates
+    const screenX = instance.x - cameraLeft;
+    const renderX = screenX - scaledWidth / 2;
+    const renderY = canvasY - scaledHeight;
     
     // Save for sprite transform
     this.ctx.save();
@@ -312,9 +355,9 @@ export class DummyRenderer {
     
     // Flip if facing left (or if sprite needs horizontal flip)
     if (effectiveFacing < 0) {
-      this.ctx.translate(instance.x, 0);
+      this.ctx.translate(screenX, 0);
       this.ctx.scale(-1, 1);
-      this.ctx.translate(-instance.x, 0);
+      this.ctx.translate(-screenX, 0);
     }
     
     // Source rectangle (from spritesheet)
@@ -343,24 +386,25 @@ export class DummyRenderer {
     
     // Draw hitbox if enabled
     if (this.showHitboxes) {
-      this.renderHitbox(instance, groundY, renderScale);
+      this.renderHitbox(instance, cameraLeft, canvasY, renderScale);
     }
   }
   
   /**
    * Render hitbox overlay for a dummy
    */
-  private renderHitbox(instance: DummyInstance, groundY: number, renderScale: number): void {
+  private renderHitbox(instance: DummyInstance, cameraLeft: number, canvasY: number, renderScale: number): void {
     const { hitbox } = instance.definition;
     
-    // Calculate hitbox position
+    // Calculate hitbox position (in screen coordinates, same as sprite)
+    const screenX = instance.x - cameraLeft;
     const hitboxWidth = hitbox.width * renderScale;
     const hitboxHeight = hitbox.height * renderScale;
     const offsetX = (hitbox.offsetX ?? 0) * renderScale;
     const offsetY = (hitbox.offsetY ?? 0) * renderScale;
     
-    const hitboxX = instance.x - hitboxWidth / 2 + offsetX;
-    const hitboxY = groundY - hitboxHeight - offsetY;
+    const hitboxX = screenX - hitboxWidth / 2 + offsetX;
+    const hitboxY = canvasY - hitboxHeight - offsetY;
     
     // Draw hitbox rectangle
     this.ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';

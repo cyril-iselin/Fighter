@@ -31,6 +31,10 @@ import { BossEventManager, BossEventRenderer, BossEventResult } from './events';
 import { TICK_RATE, PHYSICS } from 'src/app/core/config';
 import { DESIGN_HEIGHT, GROUND_Y } from 'src/app/adapters/spine-bone-transform';
 
+// Dummy System
+import { DummyRenderer, getDummy, initializeDummies } from '../../dummies';
+import type { DummyInstance } from '../../dummies';
+
 @Component({
   selector: 'app-endless',
   standalone: true,
@@ -113,6 +117,10 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
   private eventActive = signal(false);
   private lastRenderTime = 0;
 
+  // Dummy System (for dummy-wave events)
+  private dummyRenderer?: DummyRenderer;
+  private activeDummyInstance?: DummyInstance;
+
   // Game over stats
   gameOverStats = computed(() => ({
     level: this.runState().currentLevel,
@@ -151,6 +159,7 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
     this.spineRenderer?.dispose();
     this.gameLoop?.dispose();
     this.eventRenderer?.dispose();
+    this.dummyRenderer?.dispose();
   }
 
   // ============================================================================
@@ -162,6 +171,9 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Initialize all character providers FIRST
     await initializeCharacters();
+
+    // Initialize dummy system (for dummy-wave events)
+    await initializeDummies();
 
     const canvas = document.createElement('canvas');
     const container = this.canvasRef.nativeElement;
@@ -404,6 +416,26 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
       this.eventRenderer = new BossEventRenderer(this.canvasRef.nativeElement);
     }
 
+    // Create dummy renderer if needed
+    if (!this.dummyRenderer && this.canvasRef?.nativeElement) {
+      const container = this.canvasRef.nativeElement;
+      const dummyCanvas = document.createElement('canvas');
+      dummyCanvas.width = 1920;
+      dummyCanvas.height = 1080;
+      dummyCanvas.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 9;
+      `;
+      container.appendChild(dummyCanvas);
+      this.dummyRenderer = new DummyRenderer(dummyCanvas);
+      this.dummyRenderer.setShowHitboxes(false);
+    }
+
     // Create manager with callbacks
     this.eventManager = new BossEventManager(events, {
       onEventStart: (event) => {
@@ -423,6 +455,11 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
         
         // Disable boss interaction (no facing/collision)
         this.gameLoop?.setBossInteractionEnabled(false);
+
+        // Enable arena bounds for dummy events
+        if (event.definition.type === 'dummy-wave' && this.dummyRenderer) {
+          this.dummyRenderer.setArenaBounds(true, PHYSICS.minX, PHYSICS.maxX);
+        }
       },
       onEventEnd: (result) => {
         console.log('[EndlessMode] Boss event ended:', result.success ? 'SUCCESS' : 'FAIL');
@@ -437,11 +474,52 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
         // Re-enable boss interaction
         this.gameLoop?.setBossInteractionEnabled(true);
 
+        // Clear and disable arena bounds for dummies
+        if (this.dummyRenderer) {
+          this.dummyRenderer.clearInstances();
+          this.dummyRenderer.setArenaBounds(false);
+          console.log('[EndlessMode] Dummies cleared');
+        }
+
         // Apply result
         this.applyEventResult(result);
 
         // Clear event overlay
         this.eventRenderer?.clear();
+        this.activeDummyInstance = undefined;
+      },
+      onDummySpawnRequest: async (dummyId, x, y, facing) => {
+        console.log('[EndlessMode] Spawning dummy:', dummyId, 'at', x, y);
+        
+        if (!this.dummyRenderer) return;
+
+        // Load dummy assets if not loaded
+        if (!this.dummyRenderer.isLoaded(dummyId)) {
+          const dummyDef = getDummy(dummyId);
+          if (dummyDef) {
+            await this.dummyRenderer.loadDummy(dummyId);
+          }
+        }
+
+        // Get stage-specific groundY (each background has different ground height)
+        const stageGroundY = this.spineRenderer?.getGroundY() ?? 250;
+        
+        // Spawn dummy instance at stage ground level
+        this.activeDummyInstance = this.dummyRenderer.spawnDummy(dummyId, x, stageGroundY, facing);
+      },
+      onDummyDeath: (dummyId, x, y) => {
+        console.log('[EndlessMode] Dummy died:', dummyId, 'at', x, y);
+        
+        // Don't remove yet - death animation needs it
+        // Will be removed when animation completes (deathAnimationTicks === 0)
+      },
+      onDummyAnimationComplete: () => {
+        // Called when death animation finishes (deathAnimationTicks === 0)
+        if (this.activeDummyInstance && this.dummyRenderer) {
+          this.dummyRenderer.removeDummy(this.activeDummyInstance);
+          this.activeDummyInstance = undefined;
+          console.log('[EndlessMode] Removed dead dummy after animation');
+        }
       },
     });
 
@@ -457,6 +535,22 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
     const cameraLeft = this.spineRenderer?.getCameraLeft() ?? 0;
     const groundY =  DESIGN_HEIGHT - GROUND_Y;
 
+    // Calculate player hitbox for dummy-wave events (in world coordinates!)
+    const playerAttacking = player.state === 'attack';
+    const playerFacingRight = player.facingRight;
+    
+    // Simple hitbox: 100px wide, 150px tall, positioned in front of player based on facing
+    // NOTE: Keep in world coordinates (don't subtract cameraLeft)
+    const playerHitbox = {
+      x: player.x + (playerFacingRight ? 0 : -100), // In front when attacking
+      y: groundY - 150, // Approximate player height
+      width: 100,
+      height: 150
+    };
+
+    // Get current dummy position if active (for hit detection)
+    const currentDummyX = this.activeDummyInstance?.x;
+
     // Tick the event manager
     this.eventManager.tick(
       boss.health,
@@ -466,18 +560,33 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
       boss.x,
       matchState.tick,
       cameraLeft,
-      groundY
+      groundY,
+      playerAttacking,
+      playerFacingRight,
+      playerHitbox,
+      currentDummyX
     );
+
+    // Update dummy movement during event
+    const activeEvent = this.eventManager.getActiveEvent();
+    if (activeEvent && activeEvent.definition.type === 'dummy-wave' && this.dummyRenderer) {
+      const deltaTime = 1 / TICK_RATE; // Fixed timestep
+      this.dummyRenderer.update(deltaTime);
+    }
 
     // Render event overlay
     const now = performance.now();
     const deltaMs = now - this.lastRenderTime;
     this.lastRenderTime = now;
 
-    const activeEvent = this.eventManager.getActiveEvent();
     if (activeEvent && this.eventRenderer) {
       this.eventRenderer.setCameraLeft(cameraLeft);
       this.eventRenderer.render(activeEvent, deltaMs, groundY);
+      
+      // Render dummies with camera offset
+      if (activeEvent.definition.type === 'dummy-wave' && this.dummyRenderer) {
+        this.dummyRenderer.render(cameraLeft);
+      }
     }
     // Result is handled by callback
   }

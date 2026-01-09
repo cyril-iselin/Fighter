@@ -116,22 +116,22 @@ export const STICKMAN_AI_PROFILE: CharacterAIProfile = createProfile({
         // Phase 2: Half health - getting serious
         {
             name: 'Wendepunkt',
-            hpPercent: 50,                     // Aktiv bei 50-21% HP
+            hpPercent: 35,                     // Aktiv bei 50-21% HP
             speed: 1.1,                        // 10% schneller
-            aggression: 0.5,                   // Aggressiver
+            aggression: 0.3,                   // Aggressiver
             attackWeights: { heavy: 60, light: 40 }, // Mehr Heavy Attacks
-            reactionDelay: 7,                  // Schnellere Reaktion
+            reactionDelay: 9,                  // Schnellere Reaktion
             preferredDistance: 440,            // an der grenze verhält sich daher defensiv
             loadout: 'sword'                   // Wechselt zu Schwert-Loadout
         },
         // Phase 3: Low health - desperate and dangerous
         {
             name: 'Finale',
-            hpPercent: 20,                     // Aktiv bei ≤20% HP
+            hpPercent: 15,                     // Aktiv bei ≤20% HP
             speed: 1.2,                        // Noch schneller
-            aggression: 0.7,                   // Sehr aggressiv
+            aggression: 0.5,                   // Sehr aggressiv
             attackWeights: { heavy: 70, light: 30 }, // Meist Heavy Attacks
-            reactionDelay: 5,                  // Schnellste Reaktion
+            reactionDelay: 8,                  // lagsamere Reaktion
             superArmor: true,                  // Wird nicht durch Treffer unterbrochen
             preferredDistance: 400,            // näher also agressiver
             loadout: 'sword',                   // Wechselt zu Schwert-Loadout

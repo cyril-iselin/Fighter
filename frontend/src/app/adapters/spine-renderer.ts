@@ -16,7 +16,7 @@ import { BoneDebugRenderer } from './bone-debug';
 import { CombatTextRenderer } from './combat-text';
 import { BlockFreezeManager } from './spine/block-freeze';
 import { TelegraphFreezeManager } from './spine/telegraph-freeze';
-import { getBoneTip, getBoneOrigin, ATTACK_BONES, HURTBOX_BONES, gameToSpinePosition } from './spine-bone-transform';
+import { getBoneTip, getBoneOrigin, ATTACK_BONES, HURTBOX_BONES, gameToSpinePosition, GROUND_Y } from './spine-bone-transform';
 import type { SpineSkeleton } from './spine-adapter';
 import { getCharacter } from '../characters/registry';
 
@@ -54,7 +54,6 @@ function getDefaultIdleAnimation(characterId: string): string {
 
 const DESIGN_WIDTH = 1920;
 const DESIGN_HEIGHT = 1080;
-const GROUND_Y = 250; // Y position of ground (matches Legacy)
 
 export type SpineStatus = 'loading' | 'ready' | 'error';
 

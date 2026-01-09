@@ -23,21 +23,6 @@ export class BossEventRenderer {
   /** Left edge of camera viewport for coordinate conversion */
   private cameraLeft: number = 0;
 
-  /** Boss position for energy effect */
-
-
-
-
-  /** Particles for energy effect */
-  private particles: Array<{
-    x: number;
-    y: number;
-    vx: number;
-    vy: number;
-    life: number;
-    maxLife: number;
-  }> = [];
-
   constructor(container: HTMLElement) {
     // Create overlay canvas
     this.canvas = document.createElement('canvas');
@@ -87,6 +72,9 @@ export class BossEventRenderer {
         break;
       case 'quick-dash':
         this.renderQuickDash(event, groundY);
+        break;
+      case 'dummy-wave':
+        this.renderDummyWave(event, groundY);
         break;
     }
 
@@ -321,39 +309,6 @@ export class BossEventRenderer {
       this.ctx.fill();
     }
 
-    // Draw actual HITZONE for debugging (shows where player needs to be)
-    if (isActive) {
-      // X hitzone: targetRadius * 2.0 on each side (must match boss-event-manager.ts!)
-      const hitboxHalfWidth = targetRadius * 2.0;
-
-      // Y hitzone: player must be at orbY + 80 or higher (more negative)
-      // So hitzone goes from orbY + 80 (bottom) to top of screen
-      const hitboxBottom = screen.y + 80; // screen Y where player Y would be orbY + 80
-      const hitboxTop = 0; // extends to top
-
-      // Draw hitzone box (green = where you need to be)
-      this.ctx.beginPath();
-      this.ctx.rect(
-        screen.x - hitboxHalfWidth,
-        hitboxTop,
-        hitboxHalfWidth * 2,
-        hitboxBottom - hitboxTop
-      );
-      this.ctx.fillStyle = 'rgba(0, 255, 100, 0.15)';
-      this.ctx.fill();
-      this.ctx.strokeStyle = 'rgba(0, 255, 100, 0.5)';
-      this.ctx.lineWidth = 2;
-      this.ctx.stroke();
-
-      // Draw X-range indicator at orb height
-      this.ctx.beginPath();
-      this.ctx.moveTo(screen.x - hitboxHalfWidth, orbY);
-      this.ctx.lineTo(screen.x + hitboxHalfWidth, orbY);
-      this.ctx.strokeStyle = 'rgba(0, 255, 100, 0.8)';
-      this.ctx.lineWidth = 3;
-      this.ctx.stroke();
-    }
-
     // Draw success counter
     const requiredSuccesses = event.definition.requiredSuccesses ?? 1;
     if (requiredSuccesses > 1) {
@@ -377,6 +332,94 @@ export class BossEventRenderer {
       this.ctx.shadowBlur = 0;
       this.ctx.fillText('✓', screen.x, orbY);
     }
+
+    this.ctx.restore();
+  }
+
+  /**
+   * Render dummy wave event
+   */
+  private renderDummyWave(event: ActiveBossEvent, groundY: number): void {
+    if (event.definition.type !== 'dummy-wave') return;
+
+    const evt = event as any;
+    const dummy = evt.currentDummy;
+    const def = event.definition;
+
+    // Render death animation if dummy is dying
+    if (dummy && !dummy.alive && dummy.deathAnimationTicks > 0) {
+      this.renderDummyDeathAnimation(dummy, groundY);
+    }
+
+    // Render kill counter
+    const killed = evt.dummyKilledCount || 0;
+    const total = def.totalDummies;
+
+    this.ctx.save();
+    
+    // Counter background
+    const counterX = DESIGN_WIDTH / 2;
+    const counterY = 250;
+
+    this.ctx.font = 'bold 48px Arial';
+    this.ctx.textAlign = 'center';
+    this.ctx.textBaseline = 'middle';
+
+    // Shadow
+    this.ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+    this.ctx.shadowBlur = 10;
+    this.ctx.shadowOffsetX = 3;
+    this.ctx.shadowOffsetY = 3;
+
+    // Text
+    const counterText = `DUMMIES: ${killed}/${total}`;
+    this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.9)';
+    this.ctx.lineWidth = 6;
+    this.ctx.strokeText(counterText, counterX, counterY);
+    
+    this.ctx.fillStyle = killed === total ? 'rgba(57, 255, 20, 1)' : 'rgba(255, 200, 0, 1)';
+    this.ctx.shadowBlur = 0;
+    this.ctx.fillText(counterText, counterX, counterY);
+
+    this.ctx.restore();
+  }
+
+  /**
+   * Render dummy death animation (shrink and fade)
+   */
+  private renderDummyDeathAnimation(dummy: any, groundY: number): void {
+    const DEATH_DURATION = 25; // Total ticks
+    const progress = 1 - (dummy.deathAnimationTicks / DEATH_DURATION);
+
+    // Convert dummy world position to screen coordinates
+    // groundY is canvas Y where ground is (e.g., 830 for City1)
+    // dummy.x is world X, dummy.y is Spine world Y (e.g., 100 for City1 ground)
+    const screenX = dummy.x - this.cameraLeft;
+    const screenY = groundY; // Dummy is on ground, so use groundY directly
+
+    // Scale effect: 1.0 -> 0.0 (shrink to nothing)
+    const scale = 1.0 - progress;
+
+    // Fade effect: 1.0 -> 0.0
+    const alpha = 1.0 - progress;
+
+    this.ctx.save();
+    this.ctx.translate(screenX, screenY);
+
+    // Large visible circle
+    const baseRadius = 150;
+    const radius = baseRadius * scale;
+
+    // Bright red circle that's easy to see
+    this.ctx.fillStyle = `rgba(255, 0, 0, ${alpha})`;
+    this.ctx.beginPath();
+    this.ctx.arc(0, 0, radius, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // Outline for visibility
+    this.ctx.strokeStyle = `rgba(255, 255, 0, ${alpha})`;
+    this.ctx.lineWidth = 5;
+    this.ctx.stroke();
 
     this.ctx.restore();
   }
@@ -427,20 +470,10 @@ export class BossEventRenderer {
   }
 
   /**
-   * Calculate intro progress (0-1)
-   */
-  private calculateProgress(event: ActiveBossEvent): number {
-    const INTRO_TICKS = 60; // Must match boss-event-manager
-    const elapsed = event.currentTick - event.startTick;
-    return Math.min(1, elapsed / INTRO_TICKS);
-  }
-
-  /**
    * Clean up resources
    */
   dispose(): void {
     this.canvas.remove();
-    this.particles = [];
   }
 
   /**
@@ -448,6 +481,5 @@ export class BossEventRenderer {
    */
   clear(): void {
     this.ctx.clearRect(0, 0, DESIGN_WIDTH, DESIGN_HEIGHT);
-    this.particles = [];
   }
 }
