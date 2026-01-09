@@ -270,6 +270,7 @@ export class DummyRenderer {
   
   /**
    * Render a single dummy instance
+   * NOTE: Rotation is NOT supported - export spritesheets with "Allow rotation = OFF"
    */
   private renderInstance(instance: DummyInstance): void {
     const assets = this.assetsCache.get(instance.definition.id);
@@ -304,7 +305,6 @@ export class DummyRenderer {
       this.ctx.translate(-instance.x, 0);
     }
     
-    // Draw sprite
     // Source rectangle (from spritesheet)
     const sx = atlasFrame.frame.x;
     const sy = atlasFrame.frame.y;

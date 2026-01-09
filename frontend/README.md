@@ -147,3 +147,10 @@ npm run build
 **Problem**: Zu schnell/langsam  
 → Core läuft fix mit 60Hz, unabhängig von FPS  
 → Check `TICK_RATE` in `core/config.ts`
+
+
+
+Dummies:
+https://ezgif.com/sprite-cutter
+https://bulkimagecrop.com/
+https://free-tex-packer.com/
