@@ -2,6 +2,7 @@
   "name": "fighter-azure-functions",
   "version": "1.0.0",
   "description": "Fighter Highscore API",
+  "type": "module",
   "main": "dist/src/index.js",
   "scripts": {
     "build": "tsc",

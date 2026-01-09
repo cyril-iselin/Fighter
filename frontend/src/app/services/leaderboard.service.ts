@@ -46,7 +46,7 @@ export class LeaderboardService {
    */
   async getLeaderboard(): Promise<LeaderboardEntry[]> {
     try {
-      const response = await fetch(`${this.apiUrl}/api/leaderboard`);
+      const response = await fetch(`${this.apiUrl}/leaderboard`);
       if (!response.ok) {
         throw new Error('Failed to fetch leaderboard');
       }
@@ -62,7 +62,7 @@ export class LeaderboardService {
    */
   async submitScore(request: SubmitScoreRequest): Promise<SubmitScoreResponse | null> {
     try {
-      const response = await fetch(`${this.apiUrl}/api/leaderboard`, {
+      const response = await fetch(`${this.apiUrl}/leaderboard`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

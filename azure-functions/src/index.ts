@@ -1,2 +1,1 @@
-import "./functions/getHighscores";
-import "./functions/saveHighscore";
+import "./functions/leaderboard.js";
