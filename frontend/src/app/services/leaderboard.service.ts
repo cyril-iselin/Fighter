@@ -31,7 +31,7 @@ export interface SubmitScoreResponse {
   providedIn: 'root'
 })
 export class LeaderboardService {
-  private readonly apiUrl = environment.apiUrl || 'http://localhost:5000';
+  private readonly apiUrl = environment.apiUrl;
   
   /**
    * Calculate score from level and damage

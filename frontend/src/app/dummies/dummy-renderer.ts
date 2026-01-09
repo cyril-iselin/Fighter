@@ -182,13 +182,19 @@ export class DummyRenderer {
   // Update & Animation
   // ============================================================================
   
+  // Maximum delta time to prevent animation jumps when tab is in background
+  private readonly MAX_DELTA_TIME = 0.1;  // 100ms max (prevents jumps after tab switch)
+  
   /**
    * Update all dummy instances
    * @param deltaTime Time since last frame in seconds
    */
   update(deltaTime: number): void {
+    // Clamp deltaTime to prevent huge jumps after tab was in background
+    const clampedDelta = Math.min(deltaTime, this.MAX_DELTA_TIME);
+    
     for (const instance of this.instances) {
-      this.updateInstance(instance, deltaTime);
+      this.updateInstance(instance, clampedDelta);
     }
   }
   
@@ -205,7 +211,9 @@ export class DummyRenderer {
     
     // Update animation frame
     instance.frameTimer += deltaTime;
-    if (instance.frameTimer >= frameDuration) {
+    // Use while loop to handle multiple frame skips properly, but with clamped deltaTime
+    // this should only trigger once per update
+    while (instance.frameTimer >= frameDuration) {
       instance.frameTimer -= frameDuration;
       instance.currentFrame = (instance.currentFrame + 1) % frameCount;
     }
@@ -298,8 +306,12 @@ export class DummyRenderer {
     // Save for sprite transform
     this.ctx.save();
     
-    // Flip if facing left
-    if (instance.facing < 0) {
+    // Calculate effective facing: combine instance facing with definition flipX
+    const baseFlip = definition.flipX ? -1 : 1;
+    const effectiveFacing = instance.facing * baseFlip;
+    
+    // Flip if facing left (or if sprite needs horizontal flip)
+    if (effectiveFacing < 0) {
       this.ctx.translate(instance.x, 0);
       this.ctx.scale(-1, 1);
       this.ctx.translate(-instance.x, 0);

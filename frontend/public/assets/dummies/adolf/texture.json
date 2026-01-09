@@ -1,0 +1,687 @@
+{
+  "frames": {
+    "tile000.png": {
+      "frame": {
+        "x": 8,
+        "y": 8,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile001.png": {
+      "frame": {
+        "x": 8,
+        "y": 470,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile002.png": {
+      "frame": {
+        "x": 8,
+        "y": 932,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile003.png": {
+      "frame": {
+        "x": 8,
+        "y": 1394,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile004.png": {
+      "frame": {
+        "x": 282,
+        "y": 8,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile005.png": {
+      "frame": {
+        "x": 282,
+        "y": 470,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile006.png": {
+      "frame": {
+        "x": 282,
+        "y": 932,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile007.png": {
+      "frame": {
+        "x": 282,
+        "y": 1394,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile008.png": {
+      "frame": {
+        "x": 556,
+        "y": 8,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile009.png": {
+      "frame": {
+        "x": 830,
+        "y": 8,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile010.png": {
+      "frame": {
+        "x": 1104,
+        "y": 8,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile011.png": {
+      "frame": {
+        "x": 1378,
+        "y": 8,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile012.png": {
+      "frame": {
+        "x": 1652,
+        "y": 8,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile013.png": {
+      "frame": {
+        "x": 556,
+        "y": 470,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile014.png": {
+      "frame": {
+        "x": 556,
+        "y": 932,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile015.png": {
+      "frame": {
+        "x": 556,
+        "y": 1394,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile016.png": {
+      "frame": {
+        "x": 830,
+        "y": 470,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile017.png": {
+      "frame": {
+        "x": 830,
+        "y": 932,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile018.png": {
+      "frame": {
+        "x": 830,
+        "y": 1394,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile019.png": {
+      "frame": {
+        "x": 1104,
+        "y": 470,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile020.png": {
+      "frame": {
+        "x": 1378,
+        "y": 470,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile021.png": {
+      "frame": {
+        "x": 1652,
+        "y": 470,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile022.png": {
+      "frame": {
+        "x": 1104,
+        "y": 932,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile023.png": {
+      "frame": {
+        "x": 1104,
+        "y": 1394,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile024.png": {
+      "frame": {
+        "x": 1378,
+        "y": 932,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile025.png": {
+      "frame": {
+        "x": 1652,
+        "y": 932,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile026.png": {
+      "frame": {
+        "x": 1378,
+        "y": 1394,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile027.png": {
+      "frame": {
+        "x": 1652,
+        "y": 1394,
+        "w": 258,
+        "h": 446
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 258,
+        "h": 446
+      },
+      "sourceSize": {
+        "w": 258,
+        "h": 446
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.7",
+    "image": "texture.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 1918,
+      "h": 1848
+    },
+    "scale": 1
+  }
+}

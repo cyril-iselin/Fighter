@@ -36,6 +36,7 @@ export interface DummyDefinition {
   
   // Visual properties
   scale: number;            // Render scale (1.0 = original size)
+  flipX?: boolean;          // Flip sprite horizontally (for mirrored sprites)
   
   // Gameplay properties
   speed: number;            // Movement speed in pixels per second

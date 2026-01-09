@@ -21,7 +21,7 @@ export const DONALD_DUMMY: DummyDefinition = {
   scale: 1.5,  // Scale up for visibility
   
   // Gameplay properties
-  speed: 150,  // Pixels per second
+  speed: 130,  // Pixels per second
   hp: 100,
   
   // Hitbox (matches sprite size roughly)

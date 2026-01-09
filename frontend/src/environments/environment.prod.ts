@@ -4,5 +4,5 @@
 
 export const environment = {
   production: true,
-  apiUrl: '' // Same origin in production
+  apiUrl: 'https://fighter-functions.azurewebsites.net/api'  // Azure Functions deployed
 };

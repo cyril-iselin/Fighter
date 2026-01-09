@@ -1,5 +1,5 @@
 // ============================================================================
-// VLADI DUMMY DEFINITION
+// ADOLF DUMMY DEFINITION
 // ============================================================================
 // Walking character for hitbox testing
 // ============================================================================
@@ -7,29 +7,30 @@
 import { registerDummy, type DummyDefinition } from '../dummy-registry';
 
 /**
- * Vladi dummy configuration
+ * Adolf dummy configuration
  */
-export const VLADI_DUMMY: DummyDefinition = {
-  id: 'vladi',
-  name: 'Vladi',
+export const ADOLF_DUMMY: DummyDefinition = {
+  id: 'adolf',
+  name: 'Adolf',
   
   // Asset paths
-  spritesheetPath: 'assets/dummies/vladi/texture.png',
-  atlasPath: 'assets/dummies/vladi/texture.json',
+  spritesheetPath: 'assets/dummies/adolf/texture.png',
+  atlasPath: 'assets/dummies/adolf/texture.json',
   
   // Visual properties
-  scale: 1.5,  // Scale up for visibility
+  scale: 0.8,  // Scale up for visibility
+  flipX: true, // Sprite is mirrored, flip horizontally
   
   // Gameplay properties
-  speed: 110,  // Pixels per second (etwas langsamer)
-  hp: 150,
+  speed: 110,  // Pixels per second
+  hp: 100,
   
   // Hitbox (matches sprite size roughly)
   hitbox: {
-    width: 80,
-    height: 220,
+    width: 120,
+    height: 440,
     offsetX: 0,
-    offsetY: 12
+    offsetY: 0
   },
   
   // Animation
@@ -39,8 +40,8 @@ export const VLADI_DUMMY: DummyDefinition = {
 };
 
 /**
- * Register Vladi dummy
+ * Register Adolf dummy
  */
-export function registerVladi(): void {
-  registerDummy(VLADI_DUMMY);
+export function registerAdolf(): void {
+  registerDummy(ADOLF_DUMMY);
 }

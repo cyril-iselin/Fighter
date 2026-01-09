@@ -148,9 +148,23 @@ npm run build
 → Core läuft fix mit 60Hz, unabhängig von FPS  
 → Check `TICK_RATE` in `core/config.ts`
 
+## Azure Functions:
 
+Testen:
 
-Dummies:
+```bash
+cd azure-functions
+npm run build
+func start
+```
+
+Deployen:
+
+func azure functionapp publish fighter-functions
+
+## Tools für Dummies (charakters):
+
+https://www.godmodeai.co/ai-sprite-generator
 https://ezgif.com/sprite-cutter
 https://bulkimagecrop.com/
 https://free-tex-packer.com/

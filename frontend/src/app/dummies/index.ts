@@ -46,6 +46,9 @@ export async function initializeDummies(): Promise<void> {
   const cyril = await import('./charakters/cyril');
   cyril.registerCyril();
   
+  const adolf = await import('./charakters/adolf');
+  adolf.registerAdolf();
+  
   // Future dummies can be added here:
   // const otherDummy = await import('./charakters/other');
   // otherDummy.registerOther();
