@@ -1,19 +1,22 @@
 {
-  "name": "",
+  "name": "fighter-azure-functions",
   "version": "1.0.0",
-  "description": "",
-  "main": "src/functions/*.js",
+  "description": "Fighter Highscore API",
+  "main": "dist/src/functions/*.js",
   "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "prestart": "npm run build",
     "start": "func start",
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
     "@azure/data-tables": "^13.3.2",
-    "@azure/functions": "^4.0.0",
-    "uuid": "^13.0.0"
+    "@azure/functions": "^4.0.0"
   },
   "devDependencies": {
-    "@types/uuid": "^10.0.0",
-    "azure-functions-core-tools": "^4.x"
+    "@types/node": "^25.0.3",
+    "azure-functions-core-tools": "^4.x",
+    "typescript": "^5.9.3"
   }
 }
