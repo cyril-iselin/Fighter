@@ -21,20 +21,31 @@
             "outputPath": "dist/fighter",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": ["zone.js"],
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "tsconfig.json",
             "assets": [
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "staticwebapp.config.json",
+                "input": "src",
+                "output": "/"
               }
             ],
-            "styles": ["src/styles.css"],
+            "styles": [
+              "src/styles.css"
+            ],
             "scripts": [],
             "stylePreprocessorOptions": {
               "includePaths": []
             },
-            "externalDependencies": ["tailwindcss"]
+            "externalDependencies": [
+              "tailwindcss"
+            ]
           },
           "configurations": {
             "production": {

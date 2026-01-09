@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { GameLoop } from '../../game/game-loop';
 import type { MatchState, GameEvent, Loadout } from '../../core/types';
 import { SpineRenderer, type SpineStatus } from '../../adapters/spine-renderer';
-import { AVAILABLE_BACKGROUNDS, type BackgroundId } from '../../adapters/spine-stage';
+import { type BackgroundId } from '../../adapters/spine-stage';
 import { PlayerHealthbarComponent } from '../../shared/components/player-healthbar/player-healthbar.component';
 import { AiHealthbarComponent } from '../../shared/components/ai-healthbar/ai-healthbar.component';
 import { getAudioPlayer, initializeAudio } from '../../adapters/audio';
@@ -18,8 +18,7 @@ import { BuffHudComponent } from './components/buff-hud/buff-hud.component';
 import { GameOverComponent } from './components/game-over/game-over.component';
 
 import {
-  EndlessPhase, EndlessRunState, ActiveBuff, BuffDefinition,
-  PlayerModifiers, calculateModifiers
+  EndlessPhase, EndlessRunState, BuffDefinition, calculateModifiers
 } from './endless-types';
 import { initializeCharacters } from '../../characters/registry';
 import {

@@ -166,7 +166,7 @@ async function handlePost(request: HttpRequest, context: InvocationContext): Pro
             rank: rank,
             score: existingEntity.score,
             isNewHighScore: false,
-            message: 'Score not improved'
+            message: 'Kein neuer Rekord!'
           })
         };
       }
