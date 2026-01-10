@@ -288,7 +288,7 @@ export class BossEventManager {
             if (isHit) {
                 // Kill dummy
                 dummy.alive = false;
-                dummy.deathAnimationTicks = 25; // ~0.4s animation
+                dummy.deathAnimationTicks = 45; // ~0.75s animation (extended for spectacular explosion)
                 evt.dummyKilledCount++;
 
                 console.log(`[EventManager] Dummy killed! ${evt.dummyKilledCount}/${def.totalDummies}`);
@@ -541,7 +541,7 @@ export class BossEventManager {
                 if (!playerHitbox) return false;
                 if (currentDummyX === undefined) return false;
 
-                const hitPaddingX = 60;
+                const hitPaddingX = 100;
                 const dummyW = 120 + hitPaddingX * 2;
                 const dummyH = 250;
 

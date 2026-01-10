@@ -1,5 +1,47 @@
 <div class="relative min-h-screen bg-dark-bg overflow-hidden flex flex-col">
   
+  <!-- Audio Loading Overlay -->
+  @if (showAudioLoader()) {
+    <div class="absolute inset-0 z-60 flex items-center justify-center bg-black/90 backdrop-blur-sm">
+      <div class="text-center">
+        <!-- Animated sound waves -->
+        <div class="flex justify-center gap-2 mb-8">
+          @for (bar of [0, 1, 2, 3, 4]; track bar) {
+            <div 
+              class="w-2 bg-linear-to-t from-purple-500 to-pink-500 rounded-full animate-pulse"
+              [style.height.px]="20 + Math.abs(Math.sin((audioLoadingProgress() * 10) + bar)) * 30"
+              [style.animation-delay.ms]="bar * 100">
+            </div>
+          }
+        </div>
+
+        <!-- Progress text -->
+        <div class="text-white/90 text-xl font-game mb-4">
+          {{ audioLoadingText() }}
+        </div>
+
+        <!-- Progress bar -->
+        <div class="w-96 h-2 bg-white/10 rounded-full overflow-hidden">
+          <div 
+            class="h-full bg-linear-to-r from-purple-500 via-pink-500 to-purple-500 rounded-full transition-all duration-300 ease-out"
+            [style.width.%]="audioLoadingProgress() * 100"
+            style="box-shadow: 0 0 20px rgba(168, 85, 247, 0.5)">
+          </div>
+        </div>
+
+        <!-- Percentage -->
+        <div class="text-white/50 text-sm mt-3 font-mono">
+          {{ (audioLoadingProgress() * 100).toFixed(0) }}%
+        </div>
+
+        <!-- Pulsing glow effect -->
+        <div class="absolute inset-0 -z-10">
+          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
+        </div>
+      </div>
+    </div>
+  }
+  
   <!-- Click to Enter Overlay -->
   @if (showClickToEnter()) {
     <div 
@@ -30,7 +72,7 @@
           Bereit für den Kampf
         </h1>
         <h2 class="text-3xl md:text-4xl font-game text-neon-green tracking-wider text-center mb-12 drop-shadow-[0_0_15px_rgba(57,255,20,0.5)]">
-          meines Lebens
+          deines Lebens
         </h2>
         
         <!-- Click prompt -->
@@ -148,6 +190,7 @@
       </button>
 
       <!-- Single Player Button -->
+      @if (debugMode()) {
       <button 
         (click)="startTraining()"
         class="group relative overflow-hidden rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
@@ -190,8 +233,10 @@
           <div class="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
         </div>
       </button>
+      }
 
         <!-- Dummy Test Button -->
+      @if (debugMode()) {
       <button 
         (click)="startDummyTest()"
         class="group relative overflow-hidden rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
@@ -234,6 +279,7 @@
           <div class="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
         </div>
       </button>
+      }
 
       <!-- Leaderboard Button -->
       <button 

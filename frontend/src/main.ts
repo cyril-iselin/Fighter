@@ -22,11 +22,5 @@ async function bootstrap() {
 
 bootstrap().catch((err) => console.error(err));
 
-// ============================================
-// Game Loop Auto-Start (Development)
-// ============================================
 
-// Uncomment to auto-start game on page load
-// import { startGame } from './app/game/game-loop';
-// setTimeout(() => startGame({ enableDebugLogging: false }), 1000);
 

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, signal } from '@angular/core';
+import { Component, OnDestroy, signal, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { getAudioPlayer, initializeAudio } from '../../adapters/audio';
 
@@ -10,8 +10,23 @@ import { getAudioPlayer, initializeAudio } from '../../adapters/audio';
 })
 export class MenuComponent implements OnDestroy {
   showClickToEnter = signal(true);
+  audioLoadingProgress = signal(0);
+  audioLoadingText = signal('');
+  showAudioLoader = signal(false);
+  debugMode = signal(false);
+
+  // Math for template
+  Math = Math;
 
   constructor(private router: Router) {}
+
+  @HostListener('window:keydown', ['$event'])
+  handleKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'F3') {
+      event.preventDefault();
+      this.debugMode.set(!this.debugMode());
+    }
+  }
 
   ngOnDestroy(): void {
     const audio = getAudioPlayer();
@@ -20,12 +35,25 @@ export class MenuComponent implements OnDestroy {
 
   async enterMenu(): Promise<void> {
     try {
-      await initializeAudio();
+      // Show loading screen
+      this.showAudioLoader.set(true);
+      this.audioLoadingProgress.set(0);
+      this.audioLoadingText.set('Initializing audio...');
+      
       const audio = getAudioPlayer();
+      audio.setProgressCallback((progress, current) => {
+        this.audioLoadingProgress.set(progress);
+        this.audioLoadingText.set(current);
+      });
+      
+      await initializeAudio();
+      
+      this.showAudioLoader.set(false);
       await audio.playMusic('menu');
       console.log('[Menu] Audio initialized');
     } catch (e) {
       console.error('[Menu] Failed to initialize audio:', e);
+      this.showAudioLoader.set(false);
     }
     
     this.showClickToEnter.set(false);

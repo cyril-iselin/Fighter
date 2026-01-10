@@ -56,7 +56,7 @@ export class BossEventRenderer {
   /**
    * Main render function - call every frame
    */
-  render(event: ActiveBossEvent | null, deltaMs: number, groundY: number): void {
+  render(event: ActiveBossEvent | null, deltaMs: number, groundY: number, activeDummyInstance?: any): void {
     // Clear canvas
     this.ctx.clearRect(0, 0, DESIGN_WIDTH, DESIGN_HEIGHT);
 
@@ -74,7 +74,7 @@ export class BossEventRenderer {
         this.renderQuickDash(event, groundY);
         break;
       case 'dummy-wave':
-        this.renderDummyWave(event, groundY);
+        this.renderDummyWave(event, groundY, activeDummyInstance);
         break;
     }
 
@@ -339,16 +339,19 @@ export class BossEventRenderer {
   /**
    * Render dummy wave event
    */
-  private renderDummyWave(event: ActiveBossEvent, groundY: number): void {
+  private renderDummyWave(event: ActiveBossEvent, groundY: number, activeDummyInstance?: any): void {
     if (event.definition.type !== 'dummy-wave') return;
 
-    const evt = event as any;
+    const evt = event as any; // Use 'any' to access dummy-wave specific properties
     const dummy = evt.currentDummy;
     const def = event.definition;
 
     // Render death animation if dummy is dying
     if (dummy && !dummy.alive && dummy.deathAnimationTicks > 0) {
-      this.renderDummyDeathAnimation(dummy, groundY);
+      // Use current position from activeDummyInstance if available, fallback to spawn position
+      const currentX = activeDummyInstance?.x ?? dummy.x;
+      const currentY = activeDummyInstance?.y ?? dummy.y;
+      this.renderDummyDeathAnimation(dummy, groundY, currentX, currentY);
     }
 
     // Render kill counter
@@ -384,43 +387,60 @@ export class BossEventRenderer {
     this.ctx.restore();
   }
 
-  /**
-   * Render dummy death animation (shrink and fade)
-   */
-  private renderDummyDeathAnimation(dummy: any, groundY: number): void {
-    const DEATH_DURATION = 25; // Total ticks
+
+  private renderDummyDeathAnimation(dummy: any, groundY: number, currentX: number, currentY: number): void {
+    const DEATH_DURATION = 45;
     const progress = 1 - (dummy.deathAnimationTicks / DEATH_DURATION);
-
-    // Convert dummy world position to screen coordinates
-    // groundY is canvas Y where ground is (e.g., 830 for City1)
-    // dummy.x is world X, dummy.y is Spine world Y (e.g., 100 for City1 ground)
-    const screenX = dummy.x - this.cameraLeft;
-    const screenY = groundY; // Dummy is on ground, so use groundY directly
-
-    // Scale effect: 1.0 -> 0.0 (shrink to nothing)
-    const scale = 1.0 - progress;
-
-    // Fade effect: 1.0 -> 0.0
-    const alpha = 1.0 - progress;
-
+    
+    // Use current position passed from activeDummyInstance
+    const screenX = currentX - this.cameraLeft;
+    const screenY = groundY - currentY;
+    
     this.ctx.save();
-    this.ctx.translate(screenX, screenY);
-
-    // Large visible circle
-    const baseRadius = 150;
-    const radius = baseRadius * scale;
-
-    // Bright red circle that's easy to see
-    this.ctx.fillStyle = `rgba(255, 0, 0, ${alpha})`;
-    this.ctx.beginPath();
-    this.ctx.arc(0, 0, radius, 0, Math.PI * 2);
-    this.ctx.fill();
-
-    // Outline for visibility
-    this.ctx.strokeStyle = `rgba(255, 255, 0, ${alpha})`;
-    this.ctx.lineWidth = 5;
-    this.ctx.stroke();
-
+    
+    // Simple particles
+    if (progress < 0.5) {  // End earlier to avoid lingering
+      const particleCount = 256;
+      for (let i = 0; i < particleCount; i++) {
+        const angle = (i / particleCount) * Math.PI * 2;
+        const dist = progress * 880;
+        const px = screenX + Math.cos(angle) * dist;
+        const py = screenY + Math.sin(angle) * dist - progress * 240;
+        const size = 10 * (1 - progress);
+        
+        // Pure red, no green to avoid any yellow
+        this.ctx.fillStyle = `rgba(255, 0, 0, ${(1 - progress) * 0.8})`;
+        this.ctx.beginPath();
+        this.ctx.arc(px, py, size, 0, Math.PI * 2);
+        this.ctx.fill();
+      }
+    }
+    
+    // Big text
+    if (progress < 0.7) {
+      const textAlpha = progress < 0.15 ? progress / 0.15 : 1 - ((progress - 0.15) / 0.55);
+      const scale = 1 + progress * 0.5;
+      
+      this.ctx.save();
+      this.ctx.translate(screenX, screenY - 200);
+      this.ctx.scale(scale, scale);
+      
+      this.ctx.font = 'bold 100px Arial';
+      this.ctx.textAlign = 'center';
+      this.ctx.textBaseline = 'middle';
+      
+      // Outline
+      this.ctx.strokeStyle = `rgba(0, 0, 0, ${textAlpha})`;
+      this.ctx.lineWidth = 40;
+      this.ctx.strokeText('ELIMINATED!', 0, 0);
+      
+      // Fill
+      this.ctx.fillStyle = `rgba(255, 60, 60, ${textAlpha})`;
+      this.ctx.fillText('ELIMINATED!', 0, 0);
+      
+      this.ctx.restore();
+    }
+    
     this.ctx.restore();
   }
 

@@ -48,6 +48,20 @@ export class WebAudioPlayer implements AudioPlayer {
   private initialized = false;
   private initPromise: Promise<void> | null = null;
 
+  // Progress tracking for preloading
+  private loadProgress = {
+    total: 0,
+    loaded: 0,
+    callback: null as ((progress: number, current: string) => void) | null
+  };
+
+  /**
+   * Set progress callback for preloading
+   */
+  setProgressCallback(callback: (progress: number, current: string) => void): void {
+    this.loadProgress.callback = callback;
+  }
+
   /**
    * Initialize the audio context (must be called after user interaction)
    * Call this on first user click/keypress to comply with autoplay policies
@@ -92,17 +106,30 @@ export class WebAudioPlayer implements AudioPlayer {
   }
 
   /**
-   * Preload all configured sounds
+   * Preload all configured sounds with progress tracking
    */
   async preloadAll(): Promise<void> {
-    const sfxPromises = Object.keys(SFX_CONFIG).map(id => 
-      this.loadSfx(id as SfxId)
-    );
-    const musicPromises = Object.keys(MUSIC_CONFIG).map(id => 
-      this.loadMusic(id as MusicId)
-    );
+    const sfxIds = Object.keys(SFX_CONFIG) as SfxId[];
+    const musicIds = Object.keys(MUSIC_CONFIG) as MusicId[];
     
-    await Promise.allSettled([...sfxPromises, ...musicPromises]);
+    this.loadProgress.total = sfxIds.length + musicIds.length;
+    this.loadProgress.loaded = 0;
+
+    // Load SFX
+    for (const id of sfxIds) {
+      this.loadProgress.callback?.(this.loadProgress.loaded / this.loadProgress.total, `SFX: ${id}`);
+      await this.loadSfx(id);
+      this.loadProgress.loaded++;
+    }
+
+    // Load Music
+    for (const id of musicIds) {
+      this.loadProgress.callback?.(this.loadProgress.loaded / this.loadProgress.total, `Music: ${id}`);
+      await this.loadMusic(id);
+      this.loadProgress.loaded++;
+    }
+
+    this.loadProgress.callback?.(1, 'Complete');
     console.log('[WebAudioPlayer] Preloading complete');
   }
 

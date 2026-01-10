@@ -31,7 +31,6 @@ export interface BoneDebugConfig {
 export class BoneDebugRenderer {
   private ctx: CanvasRenderingContext2D;
   private config: BoneDebugConfig;
-  private _loggedOnce = false;
 
   constructor(ctx: CanvasRenderingContext2D) {
     this.ctx = ctx;
@@ -79,16 +78,6 @@ export class BoneDebugRenderer {
     
     if (!this.config.showBones && !this.config.showHurtboxes && !this.config.showHitboxes) {
       return;
-    }
-
-    const ctx = this.ctx;
-    
-    // Debug: Log once to confirm rendering is happening
-    if (!this._loggedOnce) {
-      console.log('[BoneDebug] Rendering debug overlay');
-      console.log('[BoneDebug] Fighter 0 position:', state.fighters[0].x, state.fighters[0].y);
-      console.log('[BoneDebug] Bone samples:', boneSamples[0]);
-      this._loggedOnce = true;
     }
 
     // Render each fighter
@@ -512,8 +501,8 @@ export class BoneDebugRenderer {
     const hitPoint = result.headHit ? defender.head : defender.chest;
     const canvasY = this.toCanvasY(hitPoint.y);
 
-    // Flash effect
-    ctx.fillStyle = 'rgba(255, 255, 0, 0.6)';
+    // Flash effect - CYAN instead of yellow to avoid confusion with death animation
+    ctx.fillStyle = 'rgba(0, 255, 255, 0.6)';
     ctx.beginPath();
     ctx.arc(hitPoint.x, canvasY, 15, 0, Math.PI * 2);
     ctx.fill();

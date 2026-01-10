@@ -248,8 +248,7 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
     // Switch to fight phase (background is already loaded)
     this.phase.set('fight');
 
-    // Initialize audio
-    await initializeAudio();
+    // Start fight music (audio already initialized in menu)
     const audio = getAudioPlayer();
     await audio.playMusic('fight');
 
@@ -580,7 +579,7 @@ export class EndlessComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (activeEvent && this.eventRenderer) {
       this.eventRenderer.setCameraLeft(cameraLeft);
-      this.eventRenderer.render(activeEvent, deltaMs, groundY);
+      this.eventRenderer.render(activeEvent, deltaMs, groundY, this.activeDummyInstance);
       
       // Render dummies with camera offset
       if (activeEvent.definition.type === 'dummy-wave' && this.dummyRenderer) {
